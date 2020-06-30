@@ -18,7 +18,7 @@ namespace MyAzureFunctions.Apis
         {
             string instanceId = req.Query["instanceId"];
             var status = await client.GetStatusAsync(instanceId);
-            await client.RaiseEventAsync(instanceId, Constants.MyActivityTwo, "inputDataTwo");
+            await client.RaiseEventAsync(instanceId, Constants.MyExternalInputEvent, "inputDataTwo");
           
             log.LogInformation("C# HTTP trigger function processed a request.");
 

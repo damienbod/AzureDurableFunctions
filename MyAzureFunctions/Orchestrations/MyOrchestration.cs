@@ -30,8 +30,11 @@ namespace MyAzureFunctions.Orchestrationss
                 log.LogWarning($"myActivityOne completed {myActivityOne}");
             }
 
-            var myActivityTwo = await context.WaitForExternalEvent<string>(
-                Constants.MyActivityTwo);
+            var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
+                Constants.MyExternalInputEvent);
+
+            var myActivityTwo = await context.CallActivityAsync<string>(
+                Constants.MyActivityTwo, myActivityTwoInputEvent);
 
             outputs.Add(myActivityTwo);
 
