@@ -8,12 +8,13 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace MyAzureFunctions.Apis
 {
-    public static class ExternalHttpPostInput
+    public class ExternalHttpPostInput
     {
         [FunctionName(Constants.ExternalHttpPostInput)]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+        public async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient client,
+
             ILogger log)
         {
             string instanceId = req.Query["instanceId"];
