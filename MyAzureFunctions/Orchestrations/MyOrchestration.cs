@@ -3,17 +3,21 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using MyAzureFunctions.Model;
 
 namespace MyAzureFunctions.Orchestrationss
 {
     public class MyOrchestration
     {
         [FunctionName(Constants.MyOrchestration)]
-        public async Task<List<string>> RunOrchestrator(
+        public async Task<MyOrchestrationDto> RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
-            var outputs = new List<string>();
+            var myOrchestrationDto = new MyOrchestrationDto
+            {
+                InputStartData = context.GetInput<string>()
+            };
 
             if (!context.IsReplaying)
             {
@@ -23,7 +27,7 @@ namespace MyAzureFunctions.Orchestrationss
             var myActivityOne = await context.CallActivityAsync<string>(
                 Constants.MyActivityOne, context.GetInput<string>());
 
-            outputs.Add(myActivityOne);
+            myOrchestrationDto.MyActivityOneResult = myActivityOne;
 
             if(!context.IsReplaying)
             {
@@ -32,18 +36,19 @@ namespace MyAzureFunctions.Orchestrationss
 
             var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
                 Constants.MyExternalInputEvent);
+            myOrchestrationDto.ExternalInputData = myActivityTwoInputEvent;
 
             var myActivityTwo = await context.CallActivityAsync<string>(
                 Constants.MyActivityTwo, myActivityTwoInputEvent);
 
-            outputs.Add(myActivityTwo);
+            myOrchestrationDto.MyActivityTwoResult = myActivityTwo;
 
             if (!context.IsReplaying)
             {
                 log.LogWarning($"myActivityTwo completed {myActivityTwo}");
             }
 
-            return outputs;
+            return myOrchestrationDto;
         }
     }
 }
