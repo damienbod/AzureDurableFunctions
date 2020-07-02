@@ -1,3 +1,6 @@
 /.vs
 **/bin/
 **/obj
+/MyAzureFunctions/MyAzureFunctions.csproj.user
+/MyAzureFunctions/Properties/PublishProfiles/MyAzureFunctions20200630142503 - Zip Deploy.pubxml
+/MyAzureFunctions/Properties/PublishProfiles/MyAzureFunctions20200630142503 - Zip Deploy.pubxml.user
