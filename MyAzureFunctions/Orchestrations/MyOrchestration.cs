@@ -5,7 +5,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using MyAzureFunctions.Model;
 
-namespace MyAzureFunctions.Orchestrationss
+namespace MyAzureFunctions.Orchestrations
 {
     public class MyOrchestration
     {
