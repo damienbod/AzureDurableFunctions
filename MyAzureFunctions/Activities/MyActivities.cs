@@ -8,11 +8,15 @@ namespace MyAzureFunctions.Activities
     public class MyActivities
     {
         private readonly MyConfiguration _myConfiguration;
+        private readonly MyConfigurationSecrets _myConfigurationSecrets;
 
-        public MyActivities(IOptions<MyConfiguration> myConfiguration)
+        public MyActivities(IOptions<MyConfiguration> myConfiguration, 
+            IOptions<MyConfigurationSecrets> myConfigurationSecrets)
         {
             _myConfiguration = myConfiguration.Value;
+            _myConfigurationSecrets = myConfigurationSecrets.Value;
         }
+
         [FunctionName(Constants.MyActivityOne)]
         public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
