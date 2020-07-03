@@ -21,8 +21,8 @@ namespace MyAzureFunctions.Activities
         public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
-            log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} amount of retries: {_myConfiguration.AmountOfRetries}.");
-            return $"{Constants.MyActivityOne}  {name} {_myConfiguration.Name}!";
+            log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
+            return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
         [FunctionName(Constants.MyActivityTwo)]
