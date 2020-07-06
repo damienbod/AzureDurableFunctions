@@ -1,3 +1,8 @@
+
+# Using External Inputs in Azure Durable functions
+
+https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-functions/
+
 # Development
 
 ## Microsoft Azure Storage Explorer
