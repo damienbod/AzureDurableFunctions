@@ -3,7 +3,8 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsSecretStorageType": "Files",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureKeyVaultEndpoint": "https://damienbod.vault.azure.net"
   },
   "MyConfiguration": {
     "Name": "Lilly",

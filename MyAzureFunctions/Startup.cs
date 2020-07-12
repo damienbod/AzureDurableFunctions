@@ -17,19 +17,25 @@ namespace MyAzureFunctions
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var keyVaultEndpoint = Environment.GetEnvironmentVariable("AzureKeyVaultEndpoint");
+
             if (!string.IsNullOrEmpty(keyVaultEndpoint))
             {
+                // using Key Vault, either local dev or deployed
                 var azureServiceTokenProvider = new AzureServiceTokenProvider();
                 var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
 
                 var config = new ConfigurationBuilder()
-                    .AddAzureKeyVault(keyVaultEndpoint)
+                        .AddAzureKeyVault(keyVaultEndpoint)
+                        .SetBasePath(Environment.CurrentDirectory)
+                        .AddJsonFile("local.settings.json", true)
+                        .AddEnvironmentVariables()
                     .Build();
 
                 builder.Services.AddSingleton<IConfiguration>(config);
             }
             else
             {
+                // local dev no Key Vault
                 var config = new ConfigurationBuilder()
                .SetBasePath(Environment.CurrentDirectory)
                .AddJsonFile("local.settings.json", true)
@@ -39,7 +45,7 @@ namespace MyAzureFunctions
 
                 builder.Services.AddSingleton<IConfiguration>(config);
             }
-      
+
             builder.Services.AddScoped<MyActivities>();
 
             builder.Services.AddOptions<MyConfiguration>()
