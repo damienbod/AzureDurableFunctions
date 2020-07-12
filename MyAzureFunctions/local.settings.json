@@ -4,5 +4,9 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsSecretStorageType": "Files",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "MyConfiguration": {
+    "Name": "Lilly",
+    "AmountOfRetries": 7
   }
 }
