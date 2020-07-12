@@ -3,6 +3,10 @@
 
 https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-functions/
 
+# Azure Functions Configuration and Secrets Management
+
+https://damienbod.com/2020/07/12/azure-functions-configuration-and-secrets-management/
+
 # Development
 
 ## Microsoft Azure Storage Explorer
