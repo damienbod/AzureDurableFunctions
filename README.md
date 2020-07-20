@@ -7,6 +7,10 @@ https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-function
 
 https://damienbod.com/2020/07/12/azure-functions-configuration-and-secrets-management/
 
+# Using Key Vault and Managed Identities with Azure Functions
+
+https://damienbod.com/2020/07/20/using-key-vault-and-managed-identities-with-azure-functions/
+
 # Development
 
 ## Microsoft Azure Storage Explorer
