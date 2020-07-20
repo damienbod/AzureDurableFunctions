@@ -4,3 +4,6 @@
 /MyAzureFunctions/MyAzureFunctions.csproj.user
 /MyAzureFunctions/Properties/PublishProfiles/MyAzureFunctions20200630142503 - Zip Deploy.pubxml
 /MyAzureFunctions/Properties/PublishProfiles/MyAzureFunctions20200630142503 - Zip Deploy.pubxml.user
+/MyAzureFunctions/Properties/serviceDependencies.json
+/MyAzureFunctions/Properties/serviceDependencies.local.json
+/MyAzureFunctions/Properties/serviceDependencies.local.json.user

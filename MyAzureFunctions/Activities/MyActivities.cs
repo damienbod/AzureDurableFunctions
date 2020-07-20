@@ -30,7 +30,7 @@ namespace MyAzureFunctions.Activities
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityTwo}  {name} {_myConfiguration.Name}.");
-            return $"{Constants.MyActivityTwo}  {name} {_myConfiguration.Name}!";
+            return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
         }
 
     }
