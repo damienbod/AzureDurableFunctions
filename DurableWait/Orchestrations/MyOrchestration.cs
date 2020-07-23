@@ -22,7 +22,7 @@ namespace MyAzureFDurableWaitunctions.Orchestrations
 
             if (!context.IsReplaying)
             {
-                log.LogWarning($"begin MyOrchestration with input {context.GetInput<string>()}");
+                log.LogWarning($"begin MyOrchestration with input id {myOrchestrationDto.BeginRequest.Id}");
             }
 
             var myActivityOne = await context.CallActivityAsync<string>(

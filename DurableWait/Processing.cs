@@ -11,31 +11,30 @@ namespace DurableWait
     public class Processing
     {
         private readonly ILogger<Processing> _log;
-        private readonly IDurableOrchestrationClient _client;
 
-        public Processing(IDurableOrchestrationClient client, ILoggerFactory loggerFactory)
+        public Processing(ILoggerFactory loggerFactory)
         {
             _log = loggerFactory.CreateLogger<Processing>();
-            _client = client;
         }
 
         public async Task<IActionResult> RunAndReturnWithCompletedResult(
             BeginRequestData beginRequestData, 
-            HttpRequestMessage request)
+            HttpRequestMessage request,
+            IDurableOrchestrationClient client)
         {
-            await _client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
+            await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
             _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
 
             TimeSpan timeout = TimeSpan.FromSeconds(10);
             TimeSpan retryInterval = TimeSpan.FromSeconds(1);
 
-            await _client.WaitForCompletionOrCreateCheckStatusResponseAsync(
+            await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
                 request,
                 beginRequestData.Id,
                 timeout,
                 retryInterval);
 
-            var data = await _client.GetStatusAsync(beginRequestData.Id);
+            var data = await client.GetStatusAsync(beginRequestData.Id);
             var output = data.Output.ToObject<MyOrchestrationDto>();
 
             var completeResponseData = new CompleteResponseData

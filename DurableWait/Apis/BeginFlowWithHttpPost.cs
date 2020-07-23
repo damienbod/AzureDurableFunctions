@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using DurableWait.Model;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace DurableWait.Apis
 {
@@ -21,6 +22,7 @@ namespace DurableWait.Apis
         [FunctionName(Constants.BeginFlowWithHttpPost)]
         public async Task<IActionResult> HttpStart(
           [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestMessage request,
+          [DurableClient] IDurableOrchestrationClient client,
           ILogger log)
         {
             log.LogInformation("Started new flow");
@@ -28,7 +30,7 @@ namespace DurableWait.Apis
             BeginRequestData beginRequestData = await request.Content.ReadAsAsync<BeginRequestData>();
             log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
 
-            return await _processing.RunAndReturnWithCompletedResult(beginRequestData, request);
+            return await _processing.RunAndReturnWithCompletedResult(beginRequestData, request, client);
         }
 
     }
