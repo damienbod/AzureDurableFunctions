@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using MyAzureFunctions.Model;
+using DurableWait.Model;
+using DurableWait;
 
-namespace MyAzureFunctions.Orchestrations
+namespace MyAzureFDurableWaitunctions.Orchestrations
 {
     public class MyOrchestration
     {
@@ -16,7 +17,7 @@ namespace MyAzureFunctions.Orchestrations
         {
             var myOrchestrationDto = new MyOrchestrationDto
             {
-                InputStartData = context.GetInput<string>()
+                BeginRequest = context.GetInput<BeginRequestData>()
             };
 
             if (!context.IsReplaying)
@@ -25,7 +26,7 @@ namespace MyAzureFunctions.Orchestrations
             }
 
             var myActivityOne = await context.CallActivityAsync<string>(
-                Constants.MyActivityOne, context.GetInput<string>());
+                Constants.MyActivityOne, context.GetInput<BeginRequestData>());
 
             myOrchestrationDto.MyActivityOneResult = myActivityOne;
 
@@ -34,12 +35,8 @@ namespace MyAzureFunctions.Orchestrations
                 log.LogWarning($"myActivityOne completed {myActivityOne}");
             }
 
-            var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
-                Constants.MyExternalInputEvent);
-            myOrchestrationDto.ExternalInputData = myActivityTwoInputEvent;
-
             var myActivityTwo = await context.CallActivityAsync<string>(
-                Constants.MyActivityTwo, myActivityTwoInputEvent);
+                Constants.MyActivityTwo, myOrchestrationDto);
 
             myOrchestrationDto.MyActivityTwoResult = myActivityTwo;
 

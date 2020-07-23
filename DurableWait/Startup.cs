@@ -3,14 +3,14 @@ using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MyAzureFunctions;
-using MyAzureFunctions.Activities;
+using DurableWait;
+using DurableWait.Activities;
 using System;
 using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace MyAzureFunctions
+namespace DurableWait
 {
     public class Startup : FunctionsStartup
     {
@@ -46,8 +46,6 @@ namespace MyAzureFunctions
                 builder.Services.AddSingleton<IConfiguration>(config);
             }
 
-            builder.Services.AddScoped<MyActivities>();
-
             builder.Services.AddOptions<MyConfiguration>()
                 .Configure<IConfiguration>((settings, configuration) =>
                 {
@@ -59,6 +57,10 @@ namespace MyAzureFunctions
                 {
                     configuration.GetSection("MyConfigurationSecrets").Bind(settings);
                 });
+
+            builder.Services.AddLogging();
+            builder.Services.AddScoped<MyActivities>();
+            builder.Services.AddScoped<Processing>();
         }
     }
 }

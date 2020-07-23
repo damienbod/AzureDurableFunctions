@@ -1,9 +1,10 @@
+using DurableWait.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MyAzureFunctions.Activities
+namespace DurableWait.Activities
 {
     public class MyActivities
     {
@@ -20,17 +21,17 @@ namespace MyAzureFunctions.Activities
         [FunctionName(Constants.MyActivityOne)]
         public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
-            string name = context.GetInput<string>();
-            log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
-            return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
+            BeginRequestData beginRequestData = context.GetInput<BeginRequestData>();
+            log.LogInformation($"Activity {Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
+            return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
         [FunctionName(Constants.MyActivityTwo)]
         public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
-            string name = context.GetInput<string>();
-            log.LogInformation($"Activity {Constants.MyActivityTwo}  {name} {_myConfiguration.Name}.");
-            return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
+            MyOrchestrationDto myOrchestrationDto = context.GetInput<MyOrchestrationDto>();
+            log.LogInformation($"Activity {Constants.MyActivityTwo}  {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}.");
+            return $"{Constants.MyActivityTwo} {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}!";
         }
 
     }

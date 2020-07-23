@@ -1,4 +1,4 @@
-﻿namespace MyAzureFunctions
+﻿namespace DurableWait
 {
     public class MyConfiguration
     {

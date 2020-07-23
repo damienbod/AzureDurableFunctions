@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyAzureFunctions.Model
+﻿namespace DurableWait.Model
 {
     public class MyOrchestrationDto
     {
-        public string InputStartData { get; set; }
-        public string MyActivityOneResult { get; set; }
-        public string ExternalInputData { get; set; }
+        public BeginRequestData BeginRequest { get; set; }
+        public string MyActivityOneResult { get; set; } 
         public string MyActivityTwoResult { get; set; }
     }
 }
