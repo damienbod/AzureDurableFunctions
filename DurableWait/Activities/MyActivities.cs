@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Threading;
 
 namespace DurableWait.Activities
 {
@@ -29,6 +30,9 @@ namespace DurableWait.Activities
         [FunctionName(Constants.MyActivityTwo)]
         public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
+            // simi HTTP request which lasts 14s and causes timeout
+            // Thread.Sleep(14000);
+
             MyOrchestrationDto myOrchestrationDto = context.GetInput<MyOrchestrationDto>();
             log.LogInformation($"Activity {Constants.MyActivityTwo}  {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}.");
             return $"{Constants.MyActivityTwo} {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}!";

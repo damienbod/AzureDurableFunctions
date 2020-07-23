@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace DurableWait
 {
@@ -25,7 +27,7 @@ namespace DurableWait
             await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
             _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
 
-            TimeSpan timeout = TimeSpan.FromSeconds(10);
+            TimeSpan timeout = TimeSpan.FromSeconds(7);
             TimeSpan retryInterval = TimeSpan.FromSeconds(1);
 
             await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
@@ -35,6 +37,18 @@ namespace DurableWait
                 retryInterval);
 
             var data = await client.GetStatusAsync(beginRequestData.Id);
+
+            // timeout
+            if(data.RuntimeStatus == OrchestrationRuntimeStatus.Running)
+            {
+                await client.TerminateAsync(beginRequestData.Id, "Timeout something took too long");
+                return new ContentResult()
+                {
+                    Content = "{ error: \"Timeout something took too long\" }",
+                    ContentType = "application/json",
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                };
+            }
             var output = data.Output.ToObject<MyOrchestrationDto>();
 
             var completeResponseData = new CompleteResponseData
