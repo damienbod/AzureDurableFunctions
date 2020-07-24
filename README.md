@@ -1,15 +1,13 @@
 
-# Using External Inputs in Azure Durable functions
+# Blogs
 
-https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-functions/
+<ul>
+	<li><a href="https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-functions/">Using External Inputs in Azure Durable functions</a></li>
+	<li><a href="https://damienbod.com/2020/07/12/azure-functions-configuration-and-secrets-management/">Azure Functions Configuration and Secrets Management</a></li>
+	<li><a href="https://damienbod.com/2020/07/20/using-key-vault-and-managed-identities-with-azure-functions/">Using Key Vault and Managed Identities with Azure Functions</a></li>
+	<li><a href="https://damienbod.com/2020/07/24/waiting-for-azure-durable-functions-to-complete/">Waiting for Azure Durable Functions to complete</a></li>
 
-# Azure Functions Configuration and Secrets Management
-
-https://damienbod.com/2020/07/12/azure-functions-configuration-and-secrets-management/
-
-# Using Key Vault and Managed Identities with Azure Functions
-
-https://damienbod.com/2020/07/20/using-key-vault-and-managed-identities-with-azure-functions/
+</ul>
 
 # Development
 
