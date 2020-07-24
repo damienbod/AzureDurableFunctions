@@ -30,8 +30,7 @@ namespace DurableWait.Apis
             BeginRequestData beginRequestData = await request.Content.ReadAsAsync<BeginRequestData>();
             log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
 
-            return await _processing.RunAndReturnWithCompletedResult(beginRequestData, request, client);
+            return await _processing.ProcessFlow(beginRequestData, request, client);
         }
-
     }
 }

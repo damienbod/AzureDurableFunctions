@@ -19,7 +19,7 @@ namespace DurableWait
             _log = loggerFactory.CreateLogger<Processing>();
         }
 
-        public async Task<IActionResult> RunAndReturnWithCompletedResult(
+        public async Task<IActionResult> ProcessFlow(
             BeginRequestData beginRequestData, 
             HttpRequestMessage request,
             IDurableOrchestrationClient client)
@@ -39,7 +39,7 @@ namespace DurableWait
             var data = await client.GetStatusAsync(beginRequestData.Id);
 
             // timeout
-            if(data.RuntimeStatus == OrchestrationRuntimeStatus.Running)
+            if(data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
             {
                 await client.TerminateAsync(beginRequestData.Id, "Timeout something took too long");
                 return new ContentResult()
