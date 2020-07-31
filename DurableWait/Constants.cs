@@ -11,6 +11,10 @@
         public const string BeginFlowWithHttpPost = "BeginFlowWithHttpPost";
         public const string ExternalHttpPostInput = "ExternalHttpPostInput";
 
-        public const string DiagnosticsApi = "DiagnosticsApi";
+        // Diagnostics API
+        public const string Diagnostics = "Diagnostics";
+        public const string GetAllFlows = "GetAllFlows";
+        public const string GetCompletedFlows = "GetCompletedFlows";
+        public const string GetNotCompletedFlows = "GetNotCompletedFlows";
     }
 }

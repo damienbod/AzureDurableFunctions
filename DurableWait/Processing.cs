@@ -27,7 +27,7 @@ namespace DurableWait
             await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
             _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
 
-            TimeSpan timeout = TimeSpan.FromSeconds(7);
+            TimeSpan timeout = TimeSpan.FromSeconds(30);
             TimeSpan retryInterval = TimeSpan.FromSeconds(1);
 
             await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
