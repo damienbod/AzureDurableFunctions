@@ -39,6 +39,12 @@ https://azure.microsoft.com/en-us/downloads/
 
 Install the Azure development extensions
 
+# Diagnostics Monitoring
+
+## DurableFunctionsMonitor
+
+https://github.com/scale-tone/DurableFunctionsMonitor
+
 # Links Development
 
 https://docs.microsoft.com/en-us/azure/azure-functions/durable/
