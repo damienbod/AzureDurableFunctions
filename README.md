@@ -6,6 +6,7 @@
 	<li><a href="https://damienbod.com/2020/07/12/azure-functions-configuration-and-secrets-management/">Azure Functions Configuration and Secrets Management</a></li>
 	<li><a href="https://damienbod.com/2020/07/20/using-key-vault-and-managed-identities-with-azure-functions/">Using Key Vault and Managed Identities with Azure Functions</a></li>
 	<li><a href="https://damienbod.com/2020/07/24/waiting-for-azure-durable-functions-to-complete/">Waiting for Azure Durable Functions to complete</a></li>
+	<li><a href="https://damienbod.com/2020/08/01/azure-durable-functions-monitoring-and-diagnostics/">Azure Durable Functions Monitoring and Diagnostics</a></li>
 
 </ul>
 
