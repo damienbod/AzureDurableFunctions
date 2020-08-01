@@ -9,7 +9,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DurableWait.Diagnostics
+namespace MyAzureFunctions.Diagnostics
 {
     public class DiagnosticsApi
     {
