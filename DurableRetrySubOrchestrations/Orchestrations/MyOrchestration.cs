@@ -35,14 +35,21 @@ namespace DurableRetrySubOrchestrations.Orchestrations
             var myActivityOne = await context.CallActivityWithRetryAsync<string>
                 (Constants.MyActivityOne, retryOptions, context.GetInput<string>());
 
-            //var myActivityOne = await context.CallActivityAsync<string>(
-            //    Constants.MyActivityOne, context.GetInput<string>());
-
             myOrchestrationDto.MyActivityOneResult = myActivityOne;
 
             if(!context.IsReplaying)
             {
                 log.LogWarning($"myActivityOne completed {myActivityOne}");
+            }
+
+            var mySubOrchestrationDto = await context.CallSubOrchestratorWithRetryAsync<MySubOrchestrationDto>
+               (Constants.MyActivityOne, retryOptions, myActivityOne);
+
+            myOrchestrationDto.MySubOrchestration = mySubOrchestrationDto;
+
+            if (!context.IsReplaying)
+            {
+                log.LogWarning($"mySubOrchestrationDto completed {mySubOrchestrationDto.MyActivityThreeResult}");
             }
 
             var myActivityTwo = await context.CallActivityAsync<string>(
