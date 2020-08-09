@@ -45,12 +45,8 @@ namespace DurableRetrySubOrchestrations.Orchestrations
                 log.LogWarning($"myActivityOne completed {myActivityOne}");
             }
 
-            var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
-                Constants.MyExternalInputEvent);
-            myOrchestrationDto.ExternalInputData = myActivityTwoInputEvent;
-
             var myActivityTwo = await context.CallActivityAsync<string>(
-                Constants.MyActivityTwo, myActivityTwoInputEvent);
+                Constants.MyActivityTwo, "Start MyOrchestration Activity 2");
 
             myOrchestrationDto.MyActivityTwoResult = myActivityTwo;
 

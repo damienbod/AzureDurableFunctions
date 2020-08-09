@@ -22,6 +22,7 @@ namespace DurableRetrySubOrchestrations.Activities
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
+            throw new System.Exception("something went wrong");
             return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
@@ -33,5 +34,20 @@ namespace DurableRetrySubOrchestrations.Activities
             return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
         }
 
+        [FunctionName(Constants.MyActivityThree)]
+        public string MyActivityThree([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        {
+            string name = context.GetInput<string>();
+            log.LogInformation($"Activity {Constants.MyActivityThree}  {name} {_myConfiguration.Name}.");
+            return $"{Constants.MyActivityThree} {name} {_myConfiguration.Name}!";
+        }
+
+        [FunctionName(Constants.MyActivityFour)]
+        public string MyActivityFour([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        {
+            string name = context.GetInput<string>();
+            log.LogInformation($"Activity {Constants.MyActivityFour}  {name} {_myConfiguration.Name}.");
+            return $"{Constants.MyActivityFour} {name} {_myConfiguration.Name}!";
+        }
     }
 }
