@@ -43,7 +43,7 @@ namespace DurableRetrySubOrchestrations.Orchestrations
             }
 
             var mySubOrchestrationDto = await context.CallSubOrchestratorWithRetryAsync<MySubOrchestrationDto>
-               (Constants.MyActivityOne, retryOptions, myActivityOne);
+               (Constants.MySecondOrchestration, retryOptions, myActivityOne);
 
             myOrchestrationDto.MySubOrchestration = mySubOrchestrationDto;
 

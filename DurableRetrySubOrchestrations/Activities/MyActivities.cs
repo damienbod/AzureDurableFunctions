@@ -22,7 +22,7 @@ namespace DurableRetrySubOrchestrations.Activities
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
-            throw new System.Exception("something went wrong");
+            //throw new System.Exception("something went wrong");
             return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
