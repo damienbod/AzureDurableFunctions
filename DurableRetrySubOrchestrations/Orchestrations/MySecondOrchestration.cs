@@ -15,7 +15,10 @@ namespace DurableRetrySubOrchestrations.Orchestrations
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
-            var mySubOrchestrationDto = new MySubOrchestrationDto();
+            var mySubOrchestrationDto = new MySubOrchestrationDto
+            {
+                InputStartData = context.GetInput<string>()
+            };
 
             if (!context.IsReplaying)
             {
