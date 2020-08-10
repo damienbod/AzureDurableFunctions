@@ -47,6 +47,7 @@ namespace DurableRetrySubOrchestrations.Activities
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityFour}  {name} {_myConfiguration.Name}.");
+            //throw new System.Exception("something went wrong");
             return $"{Constants.MyActivityFour} {name} {_myConfiguration.Name}!";
         }
     }
