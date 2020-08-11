@@ -12,6 +12,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DurableExternal", "DurableE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DurableWait", "DurableWait\DurableWait.csproj", "{782CDE3F-6273-4536-9F7C-E47310F6258B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DurableRetrySubOrchestrations", "DurableRetrySubOrchestrations\DurableRetrySubOrchestrations.csproj", "{782CDE3F-6273-4536-9F7C-E47310F6258C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{782CDE3F-6273-4536-9F7C-E47310F6258B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{782CDE3F-6273-4536-9F7C-E47310F6258B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{782CDE3F-6273-4536-9F7C-E47310F6258B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{782CDE3F-6273-4536-9F7C-E47310F6258C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{782CDE3F-6273-4536-9F7C-E47310F6258C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{782CDE3F-6273-4536-9F7C-E47310F6258C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{782CDE3F-6273-4536-9F7C-E47310F6258C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
