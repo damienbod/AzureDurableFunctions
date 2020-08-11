@@ -7,7 +7,7 @@
 	<li><a href="https://damienbod.com/2020/07/20/using-key-vault-and-managed-identities-with-azure-functions/">Using Key Vault and Managed Identities with Azure Functions</a></li>
 	<li><a href="https://damienbod.com/2020/07/24/waiting-for-azure-durable-functions-to-complete/">Waiting for Azure Durable Functions to complete</a></li>
 	<li><a href="https://damienbod.com/2020/08/01/azure-durable-functions-monitoring-and-diagnostics/">Azure Durable Functions Monitoring and Diagnostics</a></li>
-
+	<li><a href="https://damienbod.com/2020/08/11/retry-error-handling-for-activities-and-orchestrations-in-azure-durable-functions/">Retry Error Handling for Activities and Orchestrations in Azure Durable Functions</a></li>
 </ul>
 
 # Development
