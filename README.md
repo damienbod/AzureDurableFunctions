@@ -10,6 +10,10 @@
 	<li><a href="https://damienbod.com/2020/08/11/retry-error-handling-for-activities-and-orchestrations-in-azure-durable-functions/">Retry Error Handling for Activities and Orchestrations in Azure Durable Functions</a></li>
 </ul>
 
+# History
+
+2020-09-18 Updated Nuget packages and moved to new Configuration best practice
+
 # Development
 
 ## Microsoft Azure Storage Explorer
