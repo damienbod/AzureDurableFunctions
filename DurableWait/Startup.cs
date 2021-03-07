@@ -1,12 +1,11 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DurableWait;
 using DurableWait.Activities;
 using System;
 using System.Reflection;
+using Azure.Identity;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -40,13 +39,14 @@ namespace DurableWait
 
             if (!string.IsNullOrEmpty(keyVaultEndpoint))
             {
-                // using Key Vault, either local dev or deployed
-                var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                // might need this depending on local dev env
+                //var credential = new DefaultAzureCredential(
+                //    new DefaultAzureCredentialOptions { ExcludeSharedTokenCacheCredential = true });
 
+                // using Key Vault, either local dev or deployed
                 builder.ConfigurationBuilder
-                        .AddAzureKeyVault(keyVaultEndpoint)
                         .SetBasePath(Environment.CurrentDirectory)
+                        .AddAzureKeyVault(new Uri(keyVaultEndpoint), new DefaultAzureCredential())
                         .AddJsonFile("local.settings.json", true)
                         .AddEnvironmentVariables()
                     .Build();
