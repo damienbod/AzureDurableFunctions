@@ -79,6 +79,7 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         ILogger log)
         {
             var runtimeStatus = new List<OrchestrationRuntimeStatus> {
+                OrchestrationRuntimeStatus.Running,
                 OrchestrationRuntimeStatus.Canceled,
                 OrchestrationRuntimeStatus.ContinuedAsNew,
                 OrchestrationRuntimeStatus.Failed,
