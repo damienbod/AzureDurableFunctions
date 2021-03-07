@@ -4,6 +4,10 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsSecretStorageType": "Files",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    //"AZURE_TENANT_ID": "your tenant",
+    // To use the key vault in local debug, the Firewall needs to allow this
+    //"AzureKeyVaultEndpoint": "your azure ad tenant"
     "AzureKeyVaultEndpoint": ""
   },
   "MyConfiguration": {

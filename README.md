@@ -12,6 +12,8 @@
 
 # History
 
+2021-03-07  Update packages and using DefaultAzureCredential for Azure Key vault access
+
 2020-09-18 Updated Nuget packages and moved to new Configuration best practice
 
 # Development
