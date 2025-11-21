@@ -101,10 +101,6 @@ namespace DurableRetrySubOrchestrations.Diagnostics
             DateTime to,
             bool showInput = false)
         {
-            // Define the cancellation token.
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-
             var query = new OrchestrationQuery(
                 CreatedFrom: from,
                 CreatedTo: to,
@@ -113,7 +109,7 @@ namespace DurableRetrySubOrchestrations.Diagnostics
             );
 
             var instances = new List<OrchestrationMetadata>();
-            await foreach (var page in client.GetAllInstancesAsync(query, token))
+            await foreach (var page in client.GetAllInstancesAsync(query))
             {
                 instances.Add(page);
             }
