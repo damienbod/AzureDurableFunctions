@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MyAzureFunctions.Model;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace MyAzureFunctions.Orchestrations
 {
@@ -10,9 +11,10 @@ namespace MyAzureFunctions.Orchestrations
     {
         [Function(Constants.MyOrchestration)]
         public async Task<MyOrchestrationDto> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+            [OrchestrationTrigger] TaskOrchestrationContext context)
         {
+            var log = context.CreateReplaySafeLogger<MyOrchestration>();
+            
             var myOrchestrationDto = new MyOrchestrationDto
             {
                 InputStartData = context.GetInput<string>()

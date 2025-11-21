@@ -6,6 +6,8 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
+using System.Linq;
 
 namespace MyAzureFunctions.Diagnostics
 {
@@ -14,13 +16,13 @@ namespace MyAzureFunctions.Diagnostics
         [Function(Constants.Diagnostics)]
         public async Task<IActionResult> Diagnostics(
          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-         [DurableClient] IDurableOrchestrationClient starter,
+         [DurableClient] DurableTaskClient starter,
          ILogger log)
         {
             string instanceId = req.Query["instanceId"];
             log.LogInformation($"Started DiagnosticsApi with ID = '{instanceId}'.");
 
-            var data = await starter.GetStatusAsync(instanceId, true);
+            var data = await starter.GetInstanceAsync(instanceId, true);
             return new OkObjectResult(data);
         }
 
@@ -39,7 +41,7 @@ namespace MyAzureFunctions.Diagnostics
         [Function(Constants.GetCompletedFlows)]
         public async Task<IActionResult> GetCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [DurableClient] DurableTaskClient client,
         ILogger log)
         {
             var runtimeStatus = new List<OrchestrationRuntimeStatus> {
@@ -54,7 +56,7 @@ namespace MyAzureFunctions.Diagnostics
         [Function(Constants.GetNotCompletedFlows)]
         public async Task<IActionResult> GetNotCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [DurableClient] DurableTaskClient client,
         ILogger log)
         {
             var runtimeStatus = new List<OrchestrationRuntimeStatus> {
@@ -73,7 +75,7 @@ namespace MyAzureFunctions.Diagnostics
         [Function(Constants.GetAllFlows)]
         public async Task<IActionResult> GetAllFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [DurableClient] DurableTaskClient client,
         ILogger log)
         {
             var runtimeStatus = new List<OrchestrationRuntimeStatus> {
@@ -93,26 +95,24 @@ namespace MyAzureFunctions.Diagnostics
 
         private async Task<IActionResult> FindOrchestrations(
             HttpRequest req,  
-            IDurableOrchestrationClient client,
+            DurableTaskClient client,
             IEnumerable<OrchestrationRuntimeStatus> runtimeStatus,
             DateTime from,
             DateTime to,
             bool showInput = false)
         {
-            // Define the cancellation token.
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-
-            var instances = await client.ListInstancesAsync(
-                new OrchestrationStatusQueryCondition
-                {
-                    CreatedTimeFrom = from,
-                    CreatedTimeTo = to,
-                    RuntimeStatus = runtimeStatus,
-                    ShowInput = showInput
-                },
-                token
+            var query = new OrchestrationQuery(
+                CreatedFrom: from,
+                CreatedTo: to,
+                Statuses: runtimeStatus,
+                FetchInputsAndOutputs: showInput
             );
+
+            var instances = new List<OrchestrationMetadata>();
+            await foreach (var page in client.GetAllInstancesAsync(query))
+            {
+                instances.Add(page);
+            }
 
             return new OkObjectResult(instances);
         }

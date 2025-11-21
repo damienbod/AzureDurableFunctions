@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
 
 namespace MyAzureFunctions.Apis
 {
@@ -11,12 +12,12 @@ namespace MyAzureFunctions.Apis
         [Function(Constants.ExternalHttpPostInput)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            [DurableClient] IDurableOrchestrationClient client,
+            [DurableClient] DurableTaskClient client,
 
             ILogger log)
         {
             string instanceId = req.Query["instanceId"];
-            var status = await client.GetStatusAsync(instanceId);
+            var status = await client.GetInstanceAsync(instanceId);
             await client.RaiseEventAsync(instanceId, Constants.MyExternalInputEvent, "inputDataTwo");
           
             log.LogInformation("C# HTTP trigger function processed a request.");

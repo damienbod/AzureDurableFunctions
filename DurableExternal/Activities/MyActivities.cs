@@ -17,17 +17,15 @@ namespace MyAzureFunctions.Activities
         }
 
         [Function(Constants.MyActivityOne)]
-        public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityOne([ActivityTrigger] string name, ILogger log)
         {
-            string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
             return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
         [Function(Constants.MyActivityTwo)]
-        public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityTwo([ActivityTrigger] string name, ILogger log)
         {
-            string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityTwo}  {name} {_myConfiguration.Name}.");
             return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
         }

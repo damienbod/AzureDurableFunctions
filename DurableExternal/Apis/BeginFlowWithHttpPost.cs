@@ -4,6 +4,7 @@ using System.Net.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DurableTask.Client;
 
 namespace MyAzureFunctions.Apis
 {
@@ -12,13 +13,13 @@ namespace MyAzureFunctions.Apis
         [Function(Constants.BeginFlowWithHttpPost)]
         public async Task<IActionResult> HttpStart(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
-          [DurableClient] IDurableOrchestrationClient starter,
+          [DurableClient] DurableTaskClient starter,
           ILogger log)
         {
-            string instanceId = await starter.StartNewAsync(Constants.MyOrchestration, null, "input data to start flow");
+            string instanceId = await starter.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, "input data to start flow");
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-            return starter.CreateCheckStatusResponse(req, instanceId);
+            return new OkObjectResult(new { instanceId });
         }
     }
 }
