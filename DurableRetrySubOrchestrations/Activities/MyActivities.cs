@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Extensions.DurableTask;
+using Microsoft.DurableTask;
 
 namespace DurableRetrySubOrchestrations.Activities
 {
@@ -17,7 +19,7 @@ namespace DurableRetrySubOrchestrations.Activities
         }
 
         [Function(Constants.MyActivityOne)]
-        public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityOne([ActivityTrigger] TaskActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
@@ -26,7 +28,7 @@ namespace DurableRetrySubOrchestrations.Activities
         }
 
         [Function(Constants.MyActivityTwo)]
-        public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityTwo([ActivityTrigger] TaskActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityTwo}  {name} {_myConfiguration.Name}.");
@@ -34,7 +36,7 @@ namespace DurableRetrySubOrchestrations.Activities
         }
 
         [Function(Constants.MyActivityThree)]
-        public string MyActivityThree([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityThree([ActivityTrigger] TaskActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityThree}  {name} {_myConfiguration.Name}.");
@@ -42,7 +44,7 @@ namespace DurableRetrySubOrchestrations.Activities
         }
 
         [Function(Constants.MyActivityFour)]
-        public string MyActivityFour([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityFour([ActivityTrigger] TaskActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
             log.LogInformation($"Activity {Constants.MyActivityFour}  {name} {_myConfiguration.Name}.");
