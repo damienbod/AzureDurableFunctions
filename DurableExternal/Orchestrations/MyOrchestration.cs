@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using MyAzureFunctions.Model;
+using Microsoft.Azure.Functions.Worker;
 
 namespace MyAzureFunctions.Orchestrations
 {
     public class MyOrchestration
     {
-        [FunctionName(Constants.MyOrchestration)]
+        [Function(Constants.MyOrchestration)]
         public async Task<MyOrchestrationDto> RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
