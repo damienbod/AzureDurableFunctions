@@ -6,6 +6,7 @@ using DurableWait.Model;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.AspNetCore.Http;
 using Microsoft.DurableTask.Client;
+using System.Text.Json;
 
 namespace DurableWait.Apis
 {
@@ -27,7 +28,7 @@ namespace DurableWait.Apis
         {
             log.LogInformation("Started new flow");
 
-            BeginRequestData beginRequestData = await request.Content.ReadAsAsync<BeginRequestData>();
+            var beginRequestData = await JsonSerializer.DeserializeAsync<BeginRequestData>(request.Body);
             log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
 
             return await _processing.ProcessFlow(beginRequestData, request, client);
