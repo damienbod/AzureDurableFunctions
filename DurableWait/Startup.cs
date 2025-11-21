@@ -1,3 +1,8 @@
+// NOTE: This Startup.cs file is no longer used in the isolated worker model.
+// All service registrations and configuration have been migrated to Program.cs.
+// This file can be deleted once the migration is verified to be working correctly.
+
+/*
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,3 +69,4 @@ namespace DurableWait
         }
     }
 }
+*/

@@ -19,20 +19,18 @@ namespace DurableWait.Activities
         }
 
         [Function(Constants.MyActivityOne)]
-        public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityOne([ActivityTrigger] BeginRequestData beginRequestData, ILogger log)
         {
-            BeginRequestData beginRequestData = context.GetInput<BeginRequestData>();
             log.LogInformation($"Activity {Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
             return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
         [Function(Constants.MyActivityTwo)]
-        public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
+        public string MyActivityTwo([ActivityTrigger] MyOrchestrationDto myOrchestrationDto, ILogger log)
         {
             // simi HTTP request which lasts 14s and causes timeout
             // Thread.Sleep(14000);
 
-            MyOrchestrationDto myOrchestrationDto = context.GetInput<MyOrchestrationDto>();
             log.LogInformation($"Activity {Constants.MyActivityTwo}  {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}.");
             return $"{Constants.MyActivityTwo} {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}!";
         }

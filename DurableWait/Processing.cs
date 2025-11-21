@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.DurableTask.Client;
 
 namespace DurableWait
 {
@@ -22,26 +23,19 @@ namespace DurableWait
         public async Task<IActionResult> ProcessFlow(
             BeginRequestData beginRequestData, 
             HttpRequest request,
-            IDurableOrchestrationClient client)
+            DurableTaskClient client)
         {
-            await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
+            await client.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, beginRequestData, new StartOrchestrationOptions { InstanceId = beginRequestData.Id });
             _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
 
             TimeSpan timeout = TimeSpan.FromSeconds(30);
-            TimeSpan retryInterval = TimeSpan.FromSeconds(1);
 
-            await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
-                request,
-                beginRequestData.Id,
-                timeout,
-                retryInterval);
-
-            var data = await client.GetStatusAsync(beginRequestData.Id);
+            var data = await client.WaitForInstanceCompletionAsync(beginRequestData.Id, timeout);
 
             // timeout
-            if(data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+            if(data == null || !data.RuntimeStatus.IsCompletedOrTerminated())
             {
-                await client.TerminateAsync(beginRequestData.Id, "Timeout something took too long");
+                await client.TerminateInstanceAsync(beginRequestData.Id, "Timeout something took too long");
                 return new ContentResult()
                 {
                     Content = "{ error: \"Timeout something took too long\" }",
@@ -49,7 +43,7 @@ namespace DurableWait
                     StatusCode = (int)HttpStatusCode.InternalServerError
                 };
             }
-            var output = data.Output.ToObject<MyOrchestrationDto>();
+            var output = data.ReadOutputAs<MyOrchestrationDto>();
 
             var completeResponseData = new CompleteResponseData
             {

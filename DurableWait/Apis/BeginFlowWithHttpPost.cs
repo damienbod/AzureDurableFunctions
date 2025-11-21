@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using DurableWait.Model;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.AspNetCore.Http;
+using Microsoft.DurableTask.Client;
 
 namespace DurableWait.Apis
 {
@@ -21,7 +22,7 @@ namespace DurableWait.Apis
         [Function(Constants.BeginFlowWithHttpPost)]
         public async Task<IActionResult> HttpStart(
           [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
-          [DurableClient] IDurableOrchestrationClient client,
+          [DurableClient] DurableTaskClient client,
           ILogger log)
         {
             log.LogInformation("Started new flow");
