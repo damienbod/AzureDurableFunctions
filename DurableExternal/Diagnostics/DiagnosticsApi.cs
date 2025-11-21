@@ -55,8 +55,7 @@ public class DiagnosticsApi
     ILogger log)
     {
         var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-            OrchestrationRuntimeStatus.Canceled,
-            OrchestrationRuntimeStatus.ContinuedAsNew,
+            OrchestrationRuntimeStatus.Suspended,
             OrchestrationRuntimeStatus.Failed,
             OrchestrationRuntimeStatus.Pending,
             OrchestrationRuntimeStatus.Terminated
@@ -75,8 +74,7 @@ public class DiagnosticsApi
     {
         var runtimeStatus = new List<OrchestrationRuntimeStatus> {
             OrchestrationRuntimeStatus.Running,
-            OrchestrationRuntimeStatus.Canceled,
-            OrchestrationRuntimeStatus.ContinuedAsNew,
+            OrchestrationRuntimeStatus.Suspended,
             OrchestrationRuntimeStatus.Failed,
             OrchestrationRuntimeStatus.Pending,
             OrchestrationRuntimeStatus.Terminated,

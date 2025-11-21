@@ -55,8 +55,7 @@ public class DiagnosticsApi
     ILogger log)
     {
         var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Suspended,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated
@@ -75,8 +74,7 @@ public class DiagnosticsApi
     {
         var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Running,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Suspended,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
             Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated,
