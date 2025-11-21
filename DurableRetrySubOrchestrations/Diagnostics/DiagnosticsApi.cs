@@ -15,7 +15,7 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         [Function(Constants.Diagnostics)]
         public async Task<IActionResult> Diagnostics(
          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-         [DurableClient] IDurableOrchestrationClient starter,
+         [FromServices] Microsoft.DurableTask.Client.DurableTaskClient starter,
          ILogger log)
         {
             string instanceId = req.Query["instanceId"];
@@ -40,11 +40,11 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         [Function(Constants.GetCompletedFlows)]
         public async Task<IActionResult> GetCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Completed
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -55,15 +55,15 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         [Function(Constants.GetNotCompletedFlows)]
         public async Task<IActionResult> GetNotCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Canceled,
-                OrchestrationRuntimeStatus.ContinuedAsNew,
-                OrchestrationRuntimeStatus.Failed,
-                OrchestrationRuntimeStatus.Pending,
-                OrchestrationRuntimeStatus.Terminated
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -74,17 +74,17 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         [Function(Constants.GetAllFlows)]
         public async Task<IActionResult> GetAllFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Running,
-                OrchestrationRuntimeStatus.Canceled,
-                OrchestrationRuntimeStatus.ContinuedAsNew,
-                OrchestrationRuntimeStatus.Failed,
-                OrchestrationRuntimeStatus.Pending,
-                OrchestrationRuntimeStatus.Terminated,
-                OrchestrationRuntimeStatus.Completed
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Running,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -94,7 +94,7 @@ namespace DurableRetrySubOrchestrations.Diagnostics
 
         private async Task<IActionResult> FindOrchestrations(
             HttpRequest req,  
-            IDurableOrchestrationClient client,
+            Microsoft.DurableTask.Client.DurableTaskClient client,
             IEnumerable<OrchestrationRuntimeStatus> runtimeStatus,
             DateTime from,
             DateTime to,
