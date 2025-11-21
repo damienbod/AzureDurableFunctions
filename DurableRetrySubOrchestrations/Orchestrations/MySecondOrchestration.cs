@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using DurableRetrySubOrchestrations.Model;
 using System;
+using Microsoft.Azure.Functions.Worker;
 
 namespace DurableRetrySubOrchestrations.Orchestrations
 {
     public class MySecondOrchestration
     {
-        [FunctionName(Constants.MySecondOrchestration)]
+        [Function(Constants.MySecondOrchestration)]
         public async Task<MySubOrchestrationDto> RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)

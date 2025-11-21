@@ -1,17 +1,17 @@
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System.Net.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DurableRetrySubOrchestrations.Apis
 {
     public class BeginFlowWithHttpPost
     {
-        [FunctionName(Constants.BeginFlowWithHttpPost)]
-        public async Task<HttpResponseMessage> HttpStart(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestMessage req,
+        [Function(Constants.BeginFlowWithHttpPost)]
+        public async Task<IActionResult> HttpStart(
+          [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
           [DurableClient] IDurableOrchestrationClient starter,
           ILogger log)
         {

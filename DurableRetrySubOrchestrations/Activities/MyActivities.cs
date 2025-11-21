@@ -1,7 +1,6 @@
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Azure.Functions.Worker;
 
 namespace DurableRetrySubOrchestrations.Activities
 {
@@ -17,7 +16,7 @@ namespace DurableRetrySubOrchestrations.Activities
             _myConfigurationSecrets = myConfigurationSecrets.Value;
         }
 
-        [FunctionName(Constants.MyActivityOne)]
+        [Function(Constants.MyActivityOne)]
         public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
@@ -26,7 +25,7 @@ namespace DurableRetrySubOrchestrations.Activities
             return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
-        [FunctionName(Constants.MyActivityTwo)]
+        [Function(Constants.MyActivityTwo)]
         public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
@@ -34,7 +33,7 @@ namespace DurableRetrySubOrchestrations.Activities
             return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
         }
 
-        [FunctionName(Constants.MyActivityThree)]
+        [Function(Constants.MyActivityThree)]
         public string MyActivityThree([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
@@ -42,7 +41,7 @@ namespace DurableRetrySubOrchestrations.Activities
             return $"{Constants.MyActivityThree} {name} {_myConfiguration.Name}!";
         }
 
-        [FunctionName(Constants.MyActivityFour)]
+        [Function(Constants.MyActivityFour)]
         public string MyActivityFour([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             string name = context.GetInput<string>();
