@@ -1,13 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Client;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace DurableRetrySubOrchestrations.Diagnostics;
 
@@ -94,7 +89,7 @@ public class DiagnosticsApi
     }
 
     private async Task<IActionResult> FindOrchestrations(
-        HttpRequest req,  
+        HttpRequest req,
         Microsoft.DurableTask.Client.DurableTaskClient client,
         IEnumerable<OrchestrationRuntimeStatus> runtimeStatus,
         DateTime from,

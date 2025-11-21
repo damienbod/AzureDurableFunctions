@@ -1,11 +1,9 @@
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using DurableWait.Model;
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Client;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace DurableWait.Apis;

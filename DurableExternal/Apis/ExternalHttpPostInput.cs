@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Client;
+using Microsoft.Extensions.Logging;
 
 namespace MyAzureFunctions.Apis;
 
@@ -19,7 +18,7 @@ public class ExternalHttpPostInput
         string instanceId = req.Query["instanceId"];
         var status = await client.GetInstanceAsync(instanceId);
         await client.RaiseEventAsync(instanceId, Constants.MyExternalInputEvent, "inputDataTwo");
-      
+
         log.LogInformation("C# HTTP trigger function processed a request.");
 
         string responseMessage = string.IsNullOrEmpty(instanceId)

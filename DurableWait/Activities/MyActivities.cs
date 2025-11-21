@@ -1,8 +1,7 @@
 using DurableWait.Model;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
-using Microsoft.Azure.Functions.Worker;
 
 namespace DurableWait.Activities;
 
@@ -11,7 +10,7 @@ public class MyActivities
     private readonly MyConfiguration _myConfiguration;
     private readonly MyConfigurationSecrets _myConfigurationSecrets;
 
-    public MyActivities(IOptions<MyConfiguration> myConfiguration, 
+    public MyActivities(IOptions<MyConfiguration> myConfiguration,
         IOptions<MyConfigurationSecrets> myConfigurationSecrets)
     {
         _myConfiguration = myConfiguration.Value;

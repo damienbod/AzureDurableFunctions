@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using DurableWait.Activities;
-using DurableWait;
 using Azure.Identity;
+using DurableWait;
+using DurableWait.Activities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 var host = new HostBuilder()

@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using DurableWait.Model;
 using DurableWait;
+using DurableWait.Model;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
+using Microsoft.Extensions.Logging;
 
 namespace MyAzureFDurableWaitunctions.Orchestrations;
 
@@ -15,7 +13,7 @@ public class MyOrchestration
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
         var log = context.CreateReplaySafeLogger<MyOrchestration>();
-        
+
         var myOrchestrationDto = new MyOrchestrationDto
         {
             BeginRequest = context.GetInput<BeginRequestData>()
@@ -31,7 +29,7 @@ public class MyOrchestration
 
         myOrchestrationDto.MyActivityOneResult = myActivityOne;
 
-        if(!context.IsReplaying)
+        if (!context.IsReplaying)
         {
             log.LogWarning($"myActivityOne completed {myActivityOne}");
         }

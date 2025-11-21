@@ -1,14 +1,9 @@
 ﻿using DurableWait.Model;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.DurableTask.Client;
-using Microsoft.DurableTask;
-using System.Threading;
+using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace DurableWait;
 
@@ -22,7 +17,7 @@ public class Processing
     }
 
     public async Task<IActionResult> ProcessFlow(
-        BeginRequestData beginRequestData, 
+        BeginRequestData beginRequestData,
         HttpRequest request,
         DurableTaskClient client)
     {
@@ -50,7 +45,7 @@ public class Processing
         }
 
         // Check if completed
-        if(data == null || data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+        if (data == null || data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
         {
             await client.TerminateInstanceAsync(instanceId, "Timeout something took too long");
             return new ContentResult()

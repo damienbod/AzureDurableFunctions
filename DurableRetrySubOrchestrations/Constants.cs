@@ -7,7 +7,7 @@ public static class Constants
     public const string MyActivityOne = "MyActivityOne";
     public const string MyActivityTwo = "MyActivityTwo";
     public const string MyActivityThree = "MyActivityThree";
-    public const string MyActivityFour= "MyActivityFour";
+    public const string MyActivityFour = "MyActivityFour";
 
     public const string BeginFlowWithHttpPost = "BeginFlowWithHttpPost";
 

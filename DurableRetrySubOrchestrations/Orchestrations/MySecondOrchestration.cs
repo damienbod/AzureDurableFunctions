@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using DurableRetrySubOrchestrations.Model;
-using System;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
+using Microsoft.Extensions.Logging;
 
 namespace DurableRetrySubOrchestrations.Orchestrations;
 
@@ -15,7 +12,7 @@ public class MySecondOrchestration
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
         var log = context.CreateReplaySafeLogger<MySecondOrchestration>();
-        
+
         var mySubOrchestrationDto = new MySubOrchestrationDto
         {
             InputStartData = context.GetInput<string>()
@@ -37,7 +34,7 @@ public class MySecondOrchestration
 
         mySubOrchestrationDto.MyActivityThreeResult = myActivityThreeResult;
 
-        if(!context.IsReplaying)
+        if (!context.IsReplaying)
         {
             log.LogWarning($"MySecondOrchestration MyActivityThree completed {myActivityThreeResult}");
         }

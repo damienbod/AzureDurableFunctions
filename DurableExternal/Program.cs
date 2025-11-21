@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using MyAzureFunctions.Activities;
-using MyAzureFunctions;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using MyAzureFunctions;
+using MyAzureFunctions.Activities;
 using System.Reflection;
 
 var host = new HostBuilder()

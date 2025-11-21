@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using DurableRetrySubOrchestrations.Activities;
-using DurableRetrySubOrchestrations;
 using Azure.Identity;
+using DurableRetrySubOrchestrations;
+using DurableRetrySubOrchestrations.Activities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 var host = new HostBuilder()
