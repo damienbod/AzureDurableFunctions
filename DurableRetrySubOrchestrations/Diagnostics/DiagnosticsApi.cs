@@ -6,6 +6,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
 
 namespace DurableRetrySubOrchestrations.Diagnostics
 {
