@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using DurableRetrySubOrchestrations.Model;
 using System;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace DurableRetrySubOrchestrations.Orchestrations
 {
     public class MyOrchestration
     {
-        [FunctionName(Constants.MyOrchestration)]
+        [Function(Constants.MyOrchestration)]
         public async Task<MyOrchestrationDto> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+            [OrchestrationTrigger] TaskOrchestrationContext context)
         {
+            var log = context.CreateReplaySafeLogger<MyOrchestration>();
+            
             var myOrchestrationDto = new MyOrchestrationDto
             {
                 InputStartData = context.GetInput<string>()
@@ -25,15 +26,14 @@ namespace DurableRetrySubOrchestrations.Orchestrations
                 log.LogWarning($"begin MyOrchestration with input {context.GetInput<string>()}");
             }
 
-            var retryOptions = new RetryOptions(
+            var retryOptions = new TaskOptions(
+                new RetryPolicy(
+                    maxNumberOfAttempts: 5,
                     firstRetryInterval: TimeSpan.FromSeconds(3),
-                    maxNumberOfAttempts: 5)
-            {
-                BackoffCoefficient = 1.5
-            };
+                    backoffCoefficient: 1.5));
 
-            var myActivityOne = await context.CallActivityWithRetryAsync<string>
-                (Constants.MyActivityOne, retryOptions, context.GetInput<string>());
+            var myActivityOne = await context.CallActivityAsync<string>
+                (Constants.MyActivityOne, context.GetInput<string>(), retryOptions);
 
             myOrchestrationDto.MyActivityOneResult = myActivityOne;
 
@@ -42,8 +42,8 @@ namespace DurableRetrySubOrchestrations.Orchestrations
                 log.LogWarning($"myActivityOne completed {myActivityOne}");
             }
 
-            var mySubOrchestrationDto = await context.CallSubOrchestratorWithRetryAsync<MySubOrchestrationDto>
-               (Constants.MySecondOrchestration, retryOptions, myActivityOne);
+            var mySubOrchestrationDto = await context.CallSubOrchestratorAsync<MySubOrchestrationDto>
+               (Constants.MySecondOrchestration, myActivityOne, retryOptions);
 
             myOrchestrationDto.MySubOrchestration = mySubOrchestrationDto;
 

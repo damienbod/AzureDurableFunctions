@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using DurableWait.Model;
 using DurableWait;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace MyAzureFDurableWaitunctions.Orchestrations
 {
     public class MyOrchestration
     {
-        [FunctionName(Constants.MyOrchestration)]
+        [Function(Constants.MyOrchestration)]
         public async Task<MyOrchestrationDto> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+            [OrchestrationTrigger] TaskOrchestrationContext context)
         {
+            var log = context.CreateReplaySafeLogger<MyOrchestration>();
+            
             var myOrchestrationDto = new MyOrchestrationDto
             {
                 BeginRequest = context.GetInput<BeginRequestData>()

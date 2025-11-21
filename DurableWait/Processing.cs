@@ -1,12 +1,14 @@
 ﻿using DurableWait.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.DurableTask.Client;
+using Microsoft.DurableTask;
+using System.Threading;
 
 namespace DurableWait
 {
@@ -21,35 +23,44 @@ namespace DurableWait
 
         public async Task<IActionResult> ProcessFlow(
             BeginRequestData beginRequestData, 
-            HttpRequestMessage request,
-            IDurableOrchestrationClient client)
+            HttpRequest request,
+            DurableTaskClient client)
         {
-            await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
-            _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
+            var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, beginRequestData);
+            _log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-            TimeSpan timeout = TimeSpan.FromSeconds(30);
-            TimeSpan retryInterval = TimeSpan.FromSeconds(1);
+            // Create a timeout using CancellationTokenSource
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
-            await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
-                request,
-                beginRequestData.Id,
-                timeout,
-                retryInterval);
-
-            var data = await client.GetStatusAsync(beginRequestData.Id);
-
-            // timeout
-            if(data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+            OrchestrationMetadata data;
+            try
             {
-                await client.TerminateAsync(beginRequestData.Id, "Timeout something took too long");
+                data = await client.WaitForInstanceCompletionAsync(instanceId, getInputsAndOutputs: true, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Timeout occurred
+                await client.TerminateInstanceAsync(instanceId, "Timeout something took too long");
                 return new ContentResult()
                 {
-                    Content = "{ error: \"Timeout something took too long\" }",
+                    Content = "{ \"error\": \"Timeout something took too long\" }",
                     ContentType = "application/json",
                     StatusCode = (int)HttpStatusCode.InternalServerError
                 };
             }
-            var output = data.Output.ToObject<MyOrchestrationDto>();
+
+            // Check if completed
+            if(data == null || data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+            {
+                await client.TerminateInstanceAsync(instanceId, "Timeout something took too long");
+                return new ContentResult()
+                {
+                    Content = "{ \"error\": \"Timeout something took too long\" }",
+                    ContentType = "application/json",
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                };
+            }
+            var output = data.ReadOutputAs<MyOrchestrationDto>();
 
             var completeResponseData = new CompleteResponseData
             {

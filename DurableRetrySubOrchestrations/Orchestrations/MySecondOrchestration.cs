@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using DurableRetrySubOrchestrations.Model;
 using System;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace DurableRetrySubOrchestrations.Orchestrations
 {
     public class MySecondOrchestration
     {
-        [FunctionName(Constants.MySecondOrchestration)]
+        [Function(Constants.MySecondOrchestration)]
         public async Task<MySubOrchestrationDto> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+            [OrchestrationTrigger] TaskOrchestrationContext context)
         {
+            var log = context.CreateReplaySafeLogger<MySecondOrchestration>();
+            
             var mySubOrchestrationDto = new MySubOrchestrationDto
             {
                 InputStartData = context.GetInput<string>()
@@ -25,15 +26,14 @@ namespace DurableRetrySubOrchestrations.Orchestrations
                 log.LogWarning($"begin MySecondOrchestration with input {context.GetInput<string>()}");
             }
 
-            var retryOptions = new RetryOptions(
+            var retryOptions = new TaskOptions(
+                new RetryPolicy(
+                    maxNumberOfAttempts: 5,
                     firstRetryInterval: TimeSpan.FromSeconds(3),
-                    maxNumberOfAttempts: 5)
-            {
-                BackoffCoefficient = 1.5
-            };
+                    backoffCoefficient: 1.5));
 
-            var myActivityThreeResult = await context.CallActivityWithRetryAsync<string>
-                (Constants.MyActivityThree, retryOptions, context.GetInput<string>());
+            var myActivityThreeResult = await context.CallActivityAsync<string>
+                (Constants.MyActivityThree, context.GetInput<string>(), retryOptions);
 
             mySubOrchestrationDto.MyActivityThreeResult = myActivityThreeResult;
 

@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using DurableWait.Model;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.AspNetCore.Http;
+using Microsoft.DurableTask.Client;
+using System.Text.Json;
 
 namespace DurableWait.Apis
 {
@@ -19,15 +20,15 @@ namespace DurableWait.Apis
             _processing = processing;
         }
 
-        [FunctionName(Constants.BeginFlowWithHttpPost)]
+        [Function(Constants.BeginFlowWithHttpPost)]
         public async Task<IActionResult> HttpStart(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestMessage request,
-          [DurableClient] IDurableOrchestrationClient client,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
+          [DurableClient] DurableTaskClient client,
           ILogger log)
         {
             log.LogInformation("Started new flow");
 
-            BeginRequestData beginRequestData = await request.Content.ReadAsAsync<BeginRequestData>();
+            var beginRequestData = await JsonSerializer.DeserializeAsync<BeginRequestData>(request.Body);
             log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
 
             return await _processing.ProcessFlow(beginRequestData, request, client);

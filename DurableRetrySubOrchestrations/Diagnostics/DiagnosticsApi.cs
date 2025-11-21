@@ -1,28 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
+using System.Linq;
 
 namespace DurableRetrySubOrchestrations.Diagnostics
 {
     public class DiagnosticsApi
     {
-        [FunctionName(Constants.Diagnostics)]
+        [Function(Constants.Diagnostics)]
         public async Task<IActionResult> Diagnostics(
          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-         [DurableClient] IDurableOrchestrationClient starter,
+         [FromServices] Microsoft.DurableTask.Client.DurableTaskClient starter,
          ILogger log)
         {
             string instanceId = req.Query["instanceId"];
             log.LogInformation($"Started DiagnosticsApi with ID = '{instanceId}'.");
 
-            var data = await starter.GetStatusAsync(instanceId, true);
+            var data = await starter.GetInstanceAsync(instanceId, true);
             return new OkObjectResult(data);
         }
 
@@ -38,14 +38,14 @@ namespace DurableRetrySubOrchestrations.Diagnostics
         //    return starter.CreateCheckStatusResponse(req, trackingId);
         //}
 
-        [FunctionName(Constants.GetCompletedFlows)]
+        [Function(Constants.GetCompletedFlows)]
         public async Task<IActionResult> GetCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Completed
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -53,18 +53,18 @@ namespace DurableRetrySubOrchestrations.Diagnostics
                 DateTime.UtcNow, true);
         }
 
-        [FunctionName(Constants.GetNotCompletedFlows)]
+        [Function(Constants.GetNotCompletedFlows)]
         public async Task<IActionResult> GetNotCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Canceled,
-                OrchestrationRuntimeStatus.ContinuedAsNew,
-                OrchestrationRuntimeStatus.Failed,
-                OrchestrationRuntimeStatus.Pending,
-                OrchestrationRuntimeStatus.Terminated
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -72,20 +72,20 @@ namespace DurableRetrySubOrchestrations.Diagnostics
                 DateTime.UtcNow, true);
         }
 
-        [FunctionName(Constants.GetAllFlows)]
+        [Function(Constants.GetAllFlows)]
         public async Task<IActionResult> GetAllFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-        [DurableClient] IDurableOrchestrationClient client,
+        [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client,
         ILogger log)
         {
-            var runtimeStatus = new List<OrchestrationRuntimeStatus> {
-                OrchestrationRuntimeStatus.Running,
-                OrchestrationRuntimeStatus.Canceled,
-                OrchestrationRuntimeStatus.ContinuedAsNew,
-                OrchestrationRuntimeStatus.Failed,
-                OrchestrationRuntimeStatus.Pending,
-                OrchestrationRuntimeStatus.Terminated,
-                OrchestrationRuntimeStatus.Completed
+            var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Running,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Canceled,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.ContinuedAsNew,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated,
+                Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
             };
 
             return await FindOrchestrations(req, client, runtimeStatus,
@@ -95,26 +95,24 @@ namespace DurableRetrySubOrchestrations.Diagnostics
 
         private async Task<IActionResult> FindOrchestrations(
             HttpRequest req,  
-            IDurableOrchestrationClient client,
+            Microsoft.DurableTask.Client.DurableTaskClient client,
             IEnumerable<OrchestrationRuntimeStatus> runtimeStatus,
             DateTime from,
             DateTime to,
             bool showInput = false)
         {
-            // Define the cancellation token.
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-
-            var instances = await client.ListInstancesAsync(
-                new OrchestrationStatusQueryCondition
-                {
-                    CreatedTimeFrom = from,
-                    CreatedTimeTo = to,
-                    RuntimeStatus = runtimeStatus,
-                    ShowInput = showInput
-                },
-                token
+            var query = new OrchestrationQuery(
+                CreatedFrom: from,
+                CreatedTo: to,
+                Statuses: runtimeStatus,
+                FetchInputsAndOutputs: showInput
             );
+
+            var instances = new List<OrchestrationMetadata>();
+            await foreach (var page in client.GetAllInstancesAsync(query))
+            {
+                instances.Add(page);
+            }
 
             return new OkObjectResult(instances);
         }
