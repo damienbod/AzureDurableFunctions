@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Client;
+using System.Linq;
 
 namespace DurableRetrySubOrchestrations.Diagnostics
 {
@@ -21,7 +22,7 @@ namespace DurableRetrySubOrchestrations.Diagnostics
             string instanceId = req.Query["instanceId"];
             log.LogInformation($"Started DiagnosticsApi with ID = '{instanceId}'.");
 
-            var data = await starter.GetStatusAsync(instanceId, true);
+            var data = await starter.GetInstanceAsync(instanceId, true);
             return new OkObjectResult(data);
         }
 
@@ -104,16 +105,18 @@ namespace DurableRetrySubOrchestrations.Diagnostics
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
 
-            var instances = await client.ListInstancesAsync(
-                new OrchestrationStatusQueryCondition
-                {
-                    CreatedTimeFrom = from,
-                    CreatedTimeTo = to,
-                    RuntimeStatus = runtimeStatus,
-                    ShowInput = showInput
-                },
-                token
+            var query = new OrchestrationQuery(
+                CreatedFrom: from,
+                CreatedTo: to,
+                Statuses: runtimeStatus,
+                FetchInputsAndOutputs: showInput
             );
+
+            var instances = new List<OrchestrationMetadata>();
+            await foreach (var page in client.GetAllInstancesAsync(query, token))
+            {
+                instances.Add(page);
+            }
 
             return new OkObjectResult(instances);
         }
