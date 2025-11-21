@@ -1,8 +1,7 @@
-﻿namespace DurableWait
+﻿namespace DurableWait;
+
+public class MyConfiguration
 {
-    public class MyConfiguration
-    {
-        public string Name { get; set; }
-        public int AmountOfRetries { get; set; }
-    }
+    public string Name { get; set; }
+    public int AmountOfRetries { get; set; }
 }

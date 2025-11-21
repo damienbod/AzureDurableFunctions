@@ -8,30 +8,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.DurableTask.Client;
 using System.Text.Json;
 
-namespace DurableWait.Apis
+namespace DurableWait.Apis;
+
+
+public class BeginFlowWithHttpPost
 {
-    
-    public class BeginFlowWithHttpPost
+    private readonly Processing _processing;
+
+    public BeginFlowWithHttpPost(Processing processing)
     {
-        private readonly Processing _processing;
+        _processing = processing;
+    }
 
-        public BeginFlowWithHttpPost(Processing processing)
-        {
-            _processing = processing;
-        }
+    [Function(Constants.BeginFlowWithHttpPost)]
+    public async Task<IActionResult> HttpStart(
+      [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
+      [DurableClient] DurableTaskClient client,
+      ILogger log)
+    {
+        log.LogInformation("Started new flow");
 
-        [Function(Constants.BeginFlowWithHttpPost)]
-        public async Task<IActionResult> HttpStart(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
-          [DurableClient] DurableTaskClient client,
-          ILogger log)
-        {
-            log.LogInformation("Started new flow");
+        var beginRequestData = await JsonSerializer.DeserializeAsync<BeginRequestData>(request.Body);
+        log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
 
-            var beginRequestData = await JsonSerializer.DeserializeAsync<BeginRequestData>(request.Body);
-            log.LogInformation($"Started new flow with ID = '{beginRequestData.Id}'.");
-
-            return await _processing.ProcessFlow(beginRequestData, request, client);
-        }
+        return await _processing.ProcessFlow(beginRequestData, request, client);
     }
 }
