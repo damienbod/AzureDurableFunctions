@@ -1,12 +1,12 @@
 ﻿using DurableWait.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace DurableWait
 {
@@ -21,7 +21,7 @@ namespace DurableWait
 
         public async Task<IActionResult> ProcessFlow(
             BeginRequestData beginRequestData, 
-            HttpRequestMessage request,
+            HttpRequest request,
             IDurableOrchestrationClient client)
         {
             await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);

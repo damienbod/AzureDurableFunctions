@@ -1,19 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace DurableWait.Diagnostics
 {
     public class DiagnosticsApi
     {
-        [FunctionName(Constants.Diagnostics)]
+        [Function(Constants.Diagnostics)]
         public async Task<IActionResult> Diagnostics(
          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
          [DurableClient] IDurableOrchestrationClient starter,
@@ -38,7 +36,7 @@ namespace DurableWait.Diagnostics
         //    return starter.CreateCheckStatusResponse(req, trackingId);
         //}
 
-        [FunctionName(Constants.GetCompletedFlows)]
+        [Function(Constants.GetCompletedFlows)]
         public async Task<IActionResult> GetCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
         [DurableClient] IDurableOrchestrationClient client,
@@ -53,7 +51,7 @@ namespace DurableWait.Diagnostics
                 DateTime.UtcNow, true);
         }
 
-        [FunctionName(Constants.GetNotCompletedFlows)]
+        [Function(Constants.GetNotCompletedFlows)]
         public async Task<IActionResult> GetNotCompletedFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
         [DurableClient] IDurableOrchestrationClient client,
@@ -72,7 +70,7 @@ namespace DurableWait.Diagnostics
                 DateTime.UtcNow, true);
         }
 
-        [FunctionName(Constants.GetAllFlows)]
+        [Function(Constants.GetAllFlows)]
         public async Task<IActionResult> GetAllFlows(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
         [DurableClient] IDurableOrchestrationClient client,

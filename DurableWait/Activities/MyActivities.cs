@@ -1,9 +1,8 @@
 using DurableWait.Model;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading;
+using Microsoft.Azure.Functions.Worker;
 
 namespace DurableWait.Activities
 {
@@ -19,7 +18,7 @@ namespace DurableWait.Activities
             _myConfigurationSecrets = myConfigurationSecrets.Value;
         }
 
-        [FunctionName(Constants.MyActivityOne)]
+        [Function(Constants.MyActivityOne)]
         public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             BeginRequestData beginRequestData = context.GetInput<BeginRequestData>();
@@ -27,7 +26,7 @@ namespace DurableWait.Activities
             return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
         }
 
-        [FunctionName(Constants.MyActivityTwo)]
+        [Function(Constants.MyActivityTwo)]
         public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
         {
             // simi HTTP request which lasts 14s and causes timeout
