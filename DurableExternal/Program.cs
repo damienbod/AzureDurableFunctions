@@ -52,6 +52,6 @@ else
         .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
         .AddEnvironmentVariables();
 }
-   
+
 builder.Build().Run();
 
