@@ -5,6 +5,7 @@ using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 
 namespace DurableWait.Diagnostics;
+
 public class DiagnosticsApi
 {
     private readonly ILogger<DiagnosticsApi> _logger;
@@ -17,7 +18,7 @@ public class DiagnosticsApi
     [Function(Constants.Diagnostics)]
     public async Task<IActionResult> Diagnostics(
      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-     [FromServices] DurableTaskClient starter)
+     [DurableClient] DurableTaskClient starter)
     {
         string instanceId = req.Query["instanceId"];
         _logger.LogInformation("Started DiagnosticsApi with ID = '{instanceId}'.", instanceId);
@@ -29,8 +30,7 @@ public class DiagnosticsApi
     //[FunctionName("Diagnostics2")]
     //public IActionResult DiagnosticsApiReq(
     // [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-    // [DurableClient] IDurableOrchestrationClient starter,
-    // ILogger log)
+    // [DurableClient] IDurableOrchestrationClient starter)
     //{
     //    string instanceId = req.Query["instanceId"];
     //    _logger.LogInformation("Started Diagnostics SPI with ID = '{instanceId}'.", instanceId);
@@ -41,7 +41,7 @@ public class DiagnosticsApi
     [Function(Constants.GetCompletedFlows)]
     public async Task<IActionResult> GetCompletedFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] DurableTaskClient client)
+    [DurableClient] DurableTaskClient client)
     {
         var runtimeStatus = new List<OrchestrationRuntimeStatus> {
             OrchestrationRuntimeStatus.Completed
@@ -55,7 +55,7 @@ public class DiagnosticsApi
     [Function(Constants.GetNotCompletedFlows)]
     public async Task<IActionResult> GetNotCompletedFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] DurableTaskClient client)
+    [DurableClient] DurableTaskClient client)
     {
         var runtimeStatus = new List<OrchestrationRuntimeStatus> {
             OrchestrationRuntimeStatus.Suspended,
@@ -72,7 +72,7 @@ public class DiagnosticsApi
     [Function(Constants.GetAllFlows)]
     public async Task<IActionResult> GetAllFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] DurableTaskClient client)
+    [DurableClient] DurableTaskClient client)
     {
         var runtimeStatus = new List<OrchestrationRuntimeStatus> {
             OrchestrationRuntimeStatus.Running,
