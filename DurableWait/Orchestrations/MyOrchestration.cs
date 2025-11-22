@@ -8,12 +8,17 @@ namespace MyAzureFDurableWaitunctions.Orchestrations;
 
 public class MyOrchestration
 {
+    private readonly ILogger<MyOrchestration> _logger;
+
+    public MyOrchestration(ILogger<MyOrchestration> logger)
+    {
+        _logger = logger;
+    }
+
     [Function(Constants.MyOrchestration)]
     public async Task<MyOrchestrationDto> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        var log = context.CreateReplaySafeLogger<MyOrchestration>();
-
         var myOrchestrationDto = new MyOrchestrationDto
         {
             BeginRequest = context.GetInput<BeginRequestData>()
@@ -21,7 +26,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"begin MyOrchestration with input id {myOrchestrationDto.BeginRequest.Id}");
+            _logger.LogWarning("begin MyOrchestration with input id {myOrchestrationDtoBeginRequestId}", myOrchestrationDto.BeginRequest.Id);
         }
 
         var myActivityOne = await context.CallActivityAsync<string>(
@@ -31,7 +36,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityOne completed {myActivityOne}");
+            _logger.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
         }
 
         var myActivityTwo = await context.CallActivityAsync<string>(
@@ -41,7 +46,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityTwo completed {myActivityTwo}");
+            _logger.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
         }
 
         return myOrchestrationDto;

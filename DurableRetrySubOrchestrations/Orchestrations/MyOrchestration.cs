@@ -7,12 +7,17 @@ namespace DurableRetrySubOrchestrations.Orchestrations;
 
 public class MyOrchestration
 {
+    private readonly ILogger<MyOrchestration> _logger;
+
+    public MyOrchestration(ILogger<MyOrchestration> logger)
+    {
+        _logger = logger;
+    }
+
     [Function(Constants.MyOrchestration)]
     public async Task<MyOrchestrationDto> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        var log = context.CreateReplaySafeLogger<MyOrchestration>();
-
         var myOrchestrationDto = new MyOrchestrationDto
         {
             InputStartData = context.GetInput<string>()
@@ -20,7 +25,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning("begin MyOrchestration with input {InputStartData}", context.GetInput<string>());
+            _logger.LogWarning("begin MyOrchestration with input {InputStartData}", context.GetInput<string>());
         }
 
         var retryOptions = new TaskOptions(
@@ -36,7 +41,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
+            _logger.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
         }
 
         var mySubOrchestrationDto = await context.CallSubOrchestratorAsync<MySubOrchestrationDto>
@@ -46,7 +51,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning("mySubOrchestrationDto completed {mySubOrchestrationDtoMyActivityThreeResult}", mySubOrchestrationDto.MyActivityThreeResult);
+            _logger.LogWarning("mySubOrchestrationDto completed {mySubOrchestrationDtoMyActivityThreeResult}", mySubOrchestrationDto.MyActivityThreeResult);
         }
 
         var myActivityTwo = await context.CallActivityAsync<string>(
@@ -56,7 +61,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
+            _logger.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
         }
 
         return myOrchestrationDto;

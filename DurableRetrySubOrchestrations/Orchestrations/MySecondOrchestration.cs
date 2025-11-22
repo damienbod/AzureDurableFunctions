@@ -7,12 +7,17 @@ namespace DurableRetrySubOrchestrations.Orchestrations;
 
 public class MySecondOrchestration
 {
+    private readonly ILogger<MySecondOrchestration> _logger;
+
+    public MySecondOrchestration(ILogger<MySecondOrchestration> logger)
+    {
+        _logger = logger;
+    }
+
     [Function(Constants.MySecondOrchestration)]
     public async Task<MySubOrchestrationDto> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        var log = context.CreateReplaySafeLogger<MySecondOrchestration>();
-
         var mySubOrchestrationDto = new MySubOrchestrationDto
         {
             InputStartData = context.GetInput<string>()
@@ -20,7 +25,7 @@ public class MySecondOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"begin MySecondOrchestration with input {context.GetInput<string>()}");
+            _logger.LogWarning("begin MySecondOrchestration with input {InputString}", context.GetInput<string>());
         }
 
         var retryOptions = new TaskOptions(
@@ -36,7 +41,7 @@ public class MySecondOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"MySecondOrchestration MyActivityThree completed {myActivityThreeResult}");
+            _logger.LogWarning("MySecondOrchestration MyActivityThree completed {myActivityThreeResult}", myActivityThreeResult);
         }
 
         var myActivityFourResult = await context.CallActivityAsync<string>(
@@ -46,7 +51,7 @@ public class MySecondOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"MySecondOrchestration MyActivityFour completed {myActivityFourResult}");
+            _logger.LogWarning("MySecondOrchestration MyActivityFour completed {myActivityFourResult}", myActivityFourResult);
         }
 
         return mySubOrchestrationDto;
