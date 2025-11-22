@@ -17,6 +17,8 @@
 
 ## Development
 
+https://learn.microsoft.com/en-us/azure/azure-functions/durable/
+
 ### Microsoft Azurite
 
 https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite
