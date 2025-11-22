@@ -1,5 +1,3 @@
-using Castle.Core.Logging;
-using DurableWait.Diagnostics;
 using DurableWait.Model;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
