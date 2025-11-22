@@ -1,7 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
-using MyAzureFunctions.Apis;
 using MyAzureFunctions.Model;
 
 namespace MyAzureFunctions.Orchestrations;
