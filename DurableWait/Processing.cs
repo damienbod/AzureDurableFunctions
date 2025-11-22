@@ -9,11 +9,11 @@ namespace DurableWait;
 
 public class Processing
 {
-    private readonly ILogger<Processing> _log;
+    private readonly ILogger<Processing> _logger;
 
     public Processing(ILoggerFactory loggerFactory)
     {
-        _log = loggerFactory.CreateLogger<Processing>();
+        _logger = loggerFactory.CreateLogger<Processing>();
     }
 
     public async Task<IActionResult> ProcessFlow(
@@ -22,7 +22,7 @@ public class Processing
         DurableTaskClient client)
     {
         var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, beginRequestData);
-        _log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
+        _logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
         // Create a timeout using CancellationTokenSource
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));

@@ -48,9 +48,9 @@ https://github.com/microsoft/DurableFunctionsMonitor
 
 Required to run the Azure Function which the UI uses:
 
-´´´
+```
 npm install -g azure-functions-core-tools@4 --unsafe-perm true
-´´´
+```
 
 ## Links Development
 
