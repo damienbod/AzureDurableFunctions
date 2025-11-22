@@ -10,48 +10,32 @@
 
 ## History
 
-- 2025-11-21 Updated to .NET 10
+- 2025-11-21 Updated to .NET 10, Azure functions V4
 - 2021-05-04 Update packages
 - 2021-03-07 Update packages and using DefaultAzureCredential for Azure Key vault access
 - 2020-09-18 Updated Nuget packages and moved to new Configuration best practice
 
 ## Development
 
-### Microsoft Azure Storage Explorer
+### Microsoft Azurite
 
-https://azure.microsoft.com/en-us/features/storage-explorer/
+https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite
 
-### Microsoft Azure Storage Emulator
-
-https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator
-
-### Install the Azure Functions Core Tools
-
-https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local
-
-## NodeJS
-
-https://nodejs.org/en/
-
-## Azure CLI
-
-https://docs.microsoft.com/en-us/cli/azure/
-
-## Azure SDK
+### Azure SDK
 
 https://azure.microsoft.com/en-us/downloads/
 
-## Visual Studio
+### Visual Studio
 
 Install the Azure development extensions
 
-# Diagnostics Monitoring
+## Diagnostics Monitoring
 
-## DurableFunctionsMonitor
+### DurableFunctionsMonitor
 
 https://github.com/scale-tone/DurableFunctionsMonitor
 
-# Links Development
+## Links Development
 
 https://docs.microsoft.com/en-us/azure/azure-functions/durable/
 
