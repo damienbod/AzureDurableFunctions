@@ -30,8 +30,6 @@ builder.Services.AddOptions<MyConfigurationSecrets>()
         configuration.GetSection("MyConfigurationSecrets").Bind(settings);
     });
 
-builder.ConfigureFunctionsWebApplication();
-
 var keyVaultEndpoint = builder.Configuration["AzureKeyVaultEndpoint"];
 
 if (!string.IsNullOrEmpty(keyVaultEndpoint))

@@ -32,8 +32,6 @@ builder.Services.AddLogging();
 builder.Services.AddScoped<MyActivities>();
 builder.Services.AddScoped<Processing>();
 
-builder.ConfigureFunctionsWebApplication();
-
 var keyVaultEndpoint = builder.Configuration["AzureKeyVaultEndpoint"];
 
 if (!string.IsNullOrEmpty(keyVaultEndpoint))
