@@ -20,7 +20,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"begin MyOrchestration with input {context.GetInput<string>()}");
+            log.LogWarning("begin MyOrchestration with input {InputStartData}", context.GetInput<string>());
         }
 
         var retryOptions = new TaskOptions(
@@ -36,7 +36,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityOne completed {myActivityOne}");
+            log.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
         }
 
         var mySubOrchestrationDto = await context.CallSubOrchestratorAsync<MySubOrchestrationDto>
@@ -46,7 +46,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"mySubOrchestrationDto completed {mySubOrchestrationDto.MyActivityThreeResult}");
+            log.LogWarning("mySubOrchestrationDto completed {mySubOrchestrationDtoMyActivityThreeResult}", mySubOrchestrationDto.MyActivityThreeResult);
         }
 
         var myActivityTwo = await context.CallActivityAsync<string>(
@@ -56,7 +56,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityTwo completed {myActivityTwo}");
+            log.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
         }
 
         return myOrchestrationDto;
