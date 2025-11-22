@@ -21,6 +21,8 @@
 
 https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite
 
+https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite
+
 ### Azure SDK
 
 https://azure.microsoft.com/en-us/downloads/
