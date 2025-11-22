@@ -12,7 +12,7 @@ public class BeginFlowWithHttpPost
 
     public BeginFlowWithHttpPost(ILogger<BeginFlowWithHttpPost> logger)
     {
-        _logger = logger;   
+        _logger = logger;
     }
 
     [Function(Constants.BeginFlowWithHttpPost)]

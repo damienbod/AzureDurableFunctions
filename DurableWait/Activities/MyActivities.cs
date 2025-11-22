@@ -25,7 +25,7 @@ public class MyActivities
     {
         _logger.LogInformation("Activity {myActivityOne} {beginRequestDataId} {myConfigurationName} {myConfigurationSecretsMySecretOne} amount of retries: {myConfigurationAmountOfRetries}.",
             Constants.MyActivityOne, beginRequestData.Id, _myConfiguration.Name, _myConfigurationSecrets.MySecretOne, _myConfiguration.AmountOfRetries);
-        
+
         return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
     }
 
