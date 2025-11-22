@@ -40,7 +40,7 @@ if (!string.IsNullOrEmpty(keyVaultEndpoint))
 {
     // using Key Vault, either local dev or deployed
     builder.Configuration
-        .SetBasePath(Environment.CurrentDirectory) //  .SetBasePath(context.ApplicationRootPath)
+        .SetBasePath(Environment.CurrentDirectory)
         .AddAzureKeyVault(new Uri(keyVaultEndpoint), new DefaultAzureCredential())
         .AddJsonFile("local.settings.json", optional: true)
         .AddEnvironmentVariables();
@@ -49,7 +49,7 @@ else
 {
     // local dev no Key Vault
     builder.Configuration
-        .SetBasePath(Environment.CurrentDirectory) //  .SetBasePath(context.ApplicationRootPath)
+        .SetBasePath(Environment.CurrentDirectory)
         .AddJsonFile("local.settings.json", optional: true)
         .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
         .AddEnvironmentVariables();
