@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "DurableRetrySubOrchestrations": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7072", // --verbose
+      "launchBrowser": false
+    }
+  }
+}
