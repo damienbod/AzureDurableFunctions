@@ -30,30 +30,27 @@ builder.Services.AddOptions<MyConfigurationSecrets>()
         configuration.GetSection("MyConfigurationSecrets").Bind(settings);
     });
 
-    //.ConfigureAppConfiguration((context, configBuilder) =>
-    //{
-    //    var builtConfig = configBuilder.Build();
-    //    var keyVaultEndpoint = builtConfig["AzureKeyVaultEndpoint"];
+builder.ConfigureFunctionsWebApplication();
 
-    //    if (!string.IsNullOrEmpty(keyVaultEndpoint))
-    //    {
-    //        // using Key Vault, either local dev or deployed
-    //        configBuilder
-    //            .SetBasePath(Environment.CurrentDirectory)
-    //            .AddAzureKeyVault(new Uri(keyVaultEndpoint), new DefaultAzureCredential())
-    //            .AddJsonFile("local.settings.json", optional: true)
-    //            .AddEnvironmentVariables();
-    //    }
-    //    else
-    //    {
-    //        // local dev no Key Vault
-    //        configBuilder
-    //            .SetBasePath(Environment.CurrentDirectory)
-    //            .AddJsonFile("local.settings.json", optional: true)
-    //            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
-    //            .AddEnvironmentVariables();
-    //    }
-    //})
-    //.Build();
+var keyVaultEndpoint = builder.Configuration["AzureKeyVaultEndpoint"];
+
+if (!string.IsNullOrEmpty(keyVaultEndpoint))
+{
+    // using Key Vault, either local dev or deployed
+    builder.Configuration
+        .SetBasePath(Environment.CurrentDirectory) //  .SetBasePath(context.ApplicationRootPath)
+        .AddAzureKeyVault(new Uri(keyVaultEndpoint), new DefaultAzureCredential())
+        .AddJsonFile("local.settings.json", optional: true)
+        .AddEnvironmentVariables();
+}
+else
+{
+    // local dev no Key Vault
+    builder.Configuration
+        .SetBasePath(Environment.CurrentDirectory) //  .SetBasePath(context.ApplicationRootPath)
+        .AddJsonFile("local.settings.json", optional: true)
+        .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+        .AddEnvironmentVariables();
+}
 
 builder.Build().Run();
