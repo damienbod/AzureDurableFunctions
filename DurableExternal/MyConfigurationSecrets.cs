@@ -2,6 +2,6 @@
 
 public class MyConfigurationSecrets
 {
-    public string MySecretOne { get; set; }
-    public string MySecretTwo { get; set; }
+    public string MySecretOne { get; set; } = null!;
+    public string MySecretTwo { get; set; } = null!;
 }

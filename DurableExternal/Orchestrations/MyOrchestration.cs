@@ -1,18 +1,24 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
+using MyAzureFunctions.Apis;
 using MyAzureFunctions.Model;
 
 namespace MyAzureFunctions.Orchestrations;
 
 public class MyOrchestration
 {
+    private readonly ILogger<MyOrchestration> _logger;
+
+    public MyOrchestration(ILogger<MyOrchestration> logger)
+    {
+        _logger = logger;
+    }
+
     [Function(Constants.MyOrchestration)]
     public async Task<MyOrchestrationDto> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        var log = context.CreateReplaySafeLogger<MyOrchestration>();
-
         var myOrchestrationDto = new MyOrchestrationDto
         {
             InputStartData = context.GetInput<string>()
@@ -20,7 +26,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"begin MyOrchestration with input {context.GetInput<string>()}");
+            _logger.LogWarning("begin MyOrchestration with input {input}", context.GetInput<string>());
         }
 
         var myActivityOne = await context.CallActivityAsync<string>(
@@ -30,7 +36,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityOne completed {myActivityOne}");
+            _logger.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
         }
 
         var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
@@ -44,7 +50,7 @@ public class MyOrchestration
 
         if (!context.IsReplaying)
         {
-            log.LogWarning($"myActivityTwo completed {myActivityTwo}");
+            _logger.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
         }
 
         return myOrchestrationDto;

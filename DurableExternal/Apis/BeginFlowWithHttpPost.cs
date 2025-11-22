@@ -8,14 +8,20 @@ namespace MyAzureFunctions.Apis;
 
 public class BeginFlowWithHttpPost
 {
+    private readonly ILogger<BeginFlowWithHttpPost> _logger;
+
+    public BeginFlowWithHttpPost(ILogger<BeginFlowWithHttpPost> logger)
+    {
+        _logger = logger;   
+    }
+
     [Function(Constants.BeginFlowWithHttpPost)]
     public async Task<IActionResult> HttpStart(
       [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
-      [DurableClient] DurableTaskClient starter,
-      ILogger log)
+      [DurableClient] DurableTaskClient starter)
     {
         string instanceId = await starter.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, "input data to start flow");
-        log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+        _logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
         return new OkObjectResult(new { instanceId });
     }

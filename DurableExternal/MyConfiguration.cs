@@ -2,6 +2,6 @@
 
 public class MyConfiguration
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
     public int AmountOfRetries { get; set; }
 }
