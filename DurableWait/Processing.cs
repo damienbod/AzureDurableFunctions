@@ -22,7 +22,7 @@ public class Processing
         DurableTaskClient client)
     {
         var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, beginRequestData);
-        _log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+        _log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
         // Create a timeout using CancellationTokenSource
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
