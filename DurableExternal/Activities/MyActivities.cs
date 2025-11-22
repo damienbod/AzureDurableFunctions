@@ -8,25 +8,31 @@ public class MyActivities
 {
     private readonly MyConfiguration _myConfiguration;
     private readonly MyConfigurationSecrets _myConfigurationSecrets;
+    private readonly ILogger<MyActivities> _logger;
 
-    public MyActivities(IOptions<MyConfiguration> myConfiguration,
+    public MyActivities(ILogger<MyActivities> logger, IOptions<MyConfiguration> myConfiguration,
         IOptions<MyConfigurationSecrets> myConfigurationSecrets)
     {
         _myConfiguration = myConfiguration.Value;
         _myConfigurationSecrets = myConfigurationSecrets.Value;
+        _logger = logger;
     }
 
     [Function(Constants.MyActivityOne)]
-    public string MyActivityOne([ActivityTrigger] string name, ILogger log)
+    public string MyActivityOne([ActivityTrigger] string name)
     {
-        log.LogInformation($"Activity {Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
+        _logger.LogInformation("Activity {myActivityOne} {name} {myConfigurationName} {myConfigurationSecretsMySecretOne} amount of retries: {myConfigurationAmountOfRetries}.",
+            Constants.MyActivityOne, name, _myConfiguration.Name, _myConfigurationSecrets.MySecretOne, _myConfiguration.AmountOfRetries);
+
         return $"{Constants.MyActivityOne} {name} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
     }
 
     [Function(Constants.MyActivityTwo)]
-    public string MyActivityTwo([ActivityTrigger] string name, ILogger log)
+    public string MyActivityTwo([ActivityTrigger] string name)
     {
-        log.LogInformation($"Activity {Constants.MyActivityTwo}  {name} {_myConfiguration.Name}.");
+        _logger.LogInformation("Activity {myActivityTwo}  {name} {_myConfiguration.Name}.",
+            Constants.MyActivityTwo, name, _myConfiguration.Name);
+
         return $"{Constants.MyActivityTwo} {name} {_myConfiguration.Name}!";
     }
 
