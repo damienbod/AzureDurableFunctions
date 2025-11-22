@@ -18,7 +18,7 @@ public class DiagnosticsApi
     [Function(Constants.Diagnostics)]
     public async Task<IActionResult> Diagnostics(
      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-     [FromServices] Microsoft.DurableTask.Client.DurableTaskClient starter)
+     [FromServices] DurableTaskClient starter)
     {
         string instanceId = req.Query["instanceId"];
         _logger.LogInformation("Started DiagnosticsApi with ID = '{instanceId}'.", instanceId);
@@ -42,10 +42,10 @@ public class DiagnosticsApi
     [Function(Constants.GetCompletedFlows)]
     public async Task<IActionResult> GetCompletedFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client)
+    [FromServices] DurableTaskClient client)
     {
-        var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
+        var runtimeStatus = new List<OrchestrationRuntimeStatus> {
+            OrchestrationRuntimeStatus.Completed
         };
 
         return await FindOrchestrations(req, client, runtimeStatus,
@@ -56,13 +56,13 @@ public class DiagnosticsApi
     [Function(Constants.GetNotCompletedFlows)]
     public async Task<IActionResult> GetNotCompletedFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client)
+    [FromServices] DurableTaskClient client)
     {
-        var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Suspended,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated
+        var runtimeStatus = new List<OrchestrationRuntimeStatus> {
+            OrchestrationRuntimeStatus.Suspended,
+            OrchestrationRuntimeStatus.Failed,
+            OrchestrationRuntimeStatus.Pending,
+            OrchestrationRuntimeStatus.Terminated
         };
 
         return await FindOrchestrations(req, client, runtimeStatus,
@@ -73,15 +73,15 @@ public class DiagnosticsApi
     [Function(Constants.GetAllFlows)]
     public async Task<IActionResult> GetAllFlows(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
-    [FromServices] Microsoft.DurableTask.Client.DurableTaskClient client)
+    [FromServices] DurableTaskClient client)
     {
-        var runtimeStatus = new List<Microsoft.DurableTask.Client.OrchestrationRuntimeStatus> {
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Running,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Suspended,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Failed,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Pending,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Terminated,
-            Microsoft.DurableTask.Client.OrchestrationRuntimeStatus.Completed
+        var runtimeStatus = new List<OrchestrationRuntimeStatus> {
+            OrchestrationRuntimeStatus.Running,
+            OrchestrationRuntimeStatus.Suspended,
+            OrchestrationRuntimeStatus.Failed,
+            OrchestrationRuntimeStatus.Pending,
+            OrchestrationRuntimeStatus.Terminated,
+            OrchestrationRuntimeStatus.Completed
         };
 
         return await FindOrchestrations(req, client, runtimeStatus,
@@ -91,7 +91,7 @@ public class DiagnosticsApi
 
     private async Task<IActionResult> FindOrchestrations(
         HttpRequest req,
-        Microsoft.DurableTask.Client.DurableTaskClient client,
+        DurableTaskClient client,
         IEnumerable<OrchestrationRuntimeStatus> runtimeStatus,
         DateTime from,
         DateTime to,
