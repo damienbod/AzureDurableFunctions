@@ -7,3 +7,4 @@
 /MyAzureFunctions/Properties/serviceDependencies.json
 /MyAzureFunctions/Properties/serviceDependencies.local.json
 /MyAzureFunctions/Properties/serviceDependencies.local.json.user
+/__azurite_db**
