@@ -1,4 +1,9 @@
 
+
+# Azure Durable Functions
+
+[![.NET](https://github.com/damienbod/AzureDurableFunctions/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/AzureDurableFunctions/actions/workflows/dotnet.yml)
+
 ## Blogs
 
 - [Using External Inputs in Azure Durable functions](https://damienbod.com/2020/07/06/using-external-inputs-in-azure-durable-functions/)
