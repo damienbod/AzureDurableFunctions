@@ -2,7 +2,7 @@
   "profiles": {
     "DurableExternal": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7071",
+      "commandLineArgs": "--port 7071 --verbose",
       "launchBrowser": false
     }
   }

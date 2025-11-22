@@ -1,3 +1,4 @@
+using DurableRetrySubOrchestrations.Orchestrations;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,40 +9,50 @@ public class MyActivities
 {
     private readonly MyConfiguration _myConfiguration;
     private readonly MyConfigurationSecrets _myConfigurationSecrets;
+    private readonly ILogger<MyOrchestration> _logger;
 
-    public MyActivities(IOptions<MyConfiguration> myConfiguration,
+    public MyActivities(ILogger<MyOrchestration> logger,
+        IOptions<MyConfiguration> myConfiguration,
         IOptions<MyConfigurationSecrets> myConfigurationSecrets)
     {
         _myConfiguration = myConfiguration.Value;
         _myConfigurationSecrets = myConfigurationSecrets.Value;
+        _logger = logger;
     }
 
     [Function(Constants.MyActivityOne)]
-    public string MyActivityOne([ActivityTrigger] string input, ILogger log)
+    public string MyActivityOne([ActivityTrigger] string input)
     {
-        log.LogInformation($"Activity {Constants.MyActivityOne} {input} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
+        _logger.LogInformation("Activity {myActivityOne} {input} {myConfigurationName} {myConfigurationSecretsMySecretOne} amount of retries: {myConfigurationAmountOfRetries}.",
+            Constants.MyActivityOne, input, _myConfiguration.Name, _myConfigurationSecrets.MySecretOne, _myConfiguration.AmountOfRetries);
+
         //throw new System.Exception("something went wrong");
         return $"{Constants.MyActivityOne} {input} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
     }
 
     [Function(Constants.MyActivityTwo)]
-    public string MyActivityTwo([ActivityTrigger] string input, ILogger log)
+    public string MyActivityTwo([ActivityTrigger] string input)
     {
-        log.LogInformation($"Activity {Constants.MyActivityTwo}  {input} {_myConfiguration.Name}.");
+        _logger.LogInformation("Activity {myActivityTwo}  {input} {myConfigurationName}.", Constants.MyActivityTwo, input, _myConfiguration.Name);
+
         return $"{Constants.MyActivityTwo} {input} {_myConfiguration.Name}!";
     }
 
     [Function(Constants.MyActivityThree)]
-    public string MyActivityThree([ActivityTrigger] string input, ILogger log)
+    public string MyActivityThree([ActivityTrigger] string input)
     {
-        log.LogInformation($"Activity {Constants.MyActivityThree}  {input} {_myConfiguration.Name}.");
+        _logger.LogInformation("Activity {myActivityThree} {input} {myConfigurationName}.",
+            Constants.MyActivityThree, input, _myConfiguration.Name);
+
         return $"{Constants.MyActivityThree} {input} {_myConfiguration.Name}!";
     }
 
     [Function(Constants.MyActivityFour)]
-    public string MyActivityFour([ActivityTrigger] string input, ILogger log)
+    public string MyActivityFour([ActivityTrigger] string input)
     {
-        log.LogInformation($"Activity {Constants.MyActivityFour}  {input} {_myConfiguration.Name}.");
+        _logger.LogInformation("Activity {myActivityFour}  {input} {myConfigurationName}.",
+            Constants.MyActivityFour, input, _myConfiguration.Name);
+
         //throw new System.Exception("something went wrong");
         return $"{Constants.MyActivityFour} {input} {_myConfiguration.Name}!";
     }
