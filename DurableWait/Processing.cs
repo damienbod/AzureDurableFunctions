@@ -1,64 +1,69 @@
 ﻿using DurableWait.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
 
-namespace DurableWait
+namespace DurableWait;
+
+public class Processing
 {
-    public class Processing
+    private readonly ILogger<Processing> _log;
+
+    public Processing(ILoggerFactory loggerFactory)
     {
-        private readonly ILogger<Processing> _log;
+        _log = loggerFactory.CreateLogger<Processing>();
+    }
 
-        public Processing(ILoggerFactory loggerFactory)
+    public async Task<IActionResult> ProcessFlow(
+        BeginRequestData beginRequestData,
+        HttpRequest request,
+        DurableTaskClient client)
+    {
+        var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, beginRequestData);
+        _log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+
+        // Create a timeout using CancellationTokenSource
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+        OrchestrationMetadata data;
+        try
         {
-            _log = loggerFactory.CreateLogger<Processing>();
+            data = await client.WaitForInstanceCompletionAsync(instanceId, getInputsAndOutputs: true, cts.Token);
         }
-
-        public async Task<IActionResult> ProcessFlow(
-            BeginRequestData beginRequestData, 
-            HttpRequestMessage request,
-            IDurableOrchestrationClient client)
+        catch (OperationCanceledException)
         {
-            await client.StartNewAsync(Constants.MyOrchestration, beginRequestData.Id, beginRequestData);
-            _log.LogInformation($"Started orchestration with ID = '{beginRequestData.Id}'.");
-
-            TimeSpan timeout = TimeSpan.FromSeconds(30);
-            TimeSpan retryInterval = TimeSpan.FromSeconds(1);
-
-            await client.WaitForCompletionOrCreateCheckStatusResponseAsync(
-                request,
-                beginRequestData.Id,
-                timeout,
-                retryInterval);
-
-            var data = await client.GetStatusAsync(beginRequestData.Id);
-
-            // timeout
-            if(data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+            // Timeout occurred
+            await client.TerminateInstanceAsync(instanceId, "Timeout something took too long");
+            return new ContentResult()
             {
-                await client.TerminateAsync(beginRequestData.Id, "Timeout something took too long");
-                return new ContentResult()
-                {
-                    Content = "{ error: \"Timeout something took too long\" }",
-                    ContentType = "application/json",
-                    StatusCode = (int)HttpStatusCode.InternalServerError
-                };
-            }
-            var output = data.Output.ToObject<MyOrchestrationDto>();
-
-            var completeResponseData = new CompleteResponseData
-            {
-                BeginRequestData = output.BeginRequest,
-                Id2 = output.BeginRequest.Id + ".v2",
-                MyActivityTwoResult = output.MyActivityTwoResult
+                Content = "{ \"error\": \"Timeout something took too long\" }",
+                ContentType = "application/json",
+                StatusCode = (int)HttpStatusCode.InternalServerError
             };
-
-            return new OkObjectResult(completeResponseData);
         }
+
+        // Check if completed
+        if (data == null || data.RuntimeStatus != OrchestrationRuntimeStatus.Completed)
+        {
+            await client.TerminateInstanceAsync(instanceId, "Timeout something took too long");
+            return new ContentResult()
+            {
+                Content = "{ \"error\": \"Timeout something took too long\" }",
+                ContentType = "application/json",
+                StatusCode = (int)HttpStatusCode.InternalServerError
+            };
+        }
+        var output = data.ReadOutputAs<MyOrchestrationDto>();
+
+        var completeResponseData = new CompleteResponseData
+        {
+            BeginRequestData = output.BeginRequest,
+            Id2 = output.BeginRequest.Id + ".v2",
+            MyActivityTwoResult = output.MyActivityTwoResult
+        };
+
+        return new OkObjectResult(completeResponseData);
     }
 }

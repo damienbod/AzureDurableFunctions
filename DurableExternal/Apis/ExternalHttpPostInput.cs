@@ -1,33 +1,35 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
-namespace MyAzureFunctions.Apis
+namespace MyAzureFunctions.Apis;
+
+public class ExternalHttpPostInput
 {
-    public class ExternalHttpPostInput
+    private readonly ILogger<ExternalHttpPostInput> _logger;
+
+    public ExternalHttpPostInput(ILogger<ExternalHttpPostInput> logger)
     {
-        [FunctionName(Constants.ExternalHttpPostInput)]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            [DurableClient] IDurableOrchestrationClient client,
+        _logger = logger;
+    }
 
-            ILogger log)
-        {
-            string instanceId = req.Query["instanceId"];
-            var status = await client.GetStatusAsync(instanceId);
-            await client.RaiseEventAsync(instanceId, Constants.MyExternalInputEvent, "inputDataTwo");
-          
-            log.LogInformation("C# HTTP trigger function processed a request.");
+    [Function(Constants.ExternalHttpPostInput)]
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+        [DurableClient] DurableTaskClient client)
+    {
+        string instanceId = req.Query["instanceId"];
+        var status = await client.GetInstanceAsync(instanceId);
+        await client.RaiseEventAsync(instanceId, Constants.MyExternalInputEvent, "inputDataTwo");
 
-            string responseMessage = string.IsNullOrEmpty(instanceId)
-                ? "This HTTP triggered function executed successfully. Pass an instanceId in the query string"
-                : $"Received, processing, {instanceId}";
+        _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            return new OkObjectResult(responseMessage);
-        }
+        string responseMessage = string.IsNullOrEmpty(instanceId)
+            ? "This HTTP triggered function executed successfully. Pass an instanceId in the query string"
+            : $"Received, processing, {instanceId}";
+
+        return new OkObjectResult(responseMessage);
     }
 }

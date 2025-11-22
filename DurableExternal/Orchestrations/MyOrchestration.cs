@@ -1,54 +1,57 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
 using MyAzureFunctions.Model;
 
-namespace MyAzureFunctions.Orchestrations
+namespace MyAzureFunctions.Orchestrations;
+
+public class MyOrchestration
 {
-    public class MyOrchestration
+    private readonly ILogger<MyOrchestration> _logger;
+
+    public MyOrchestration(ILogger<MyOrchestration> logger)
     {
-        [FunctionName(Constants.MyOrchestration)]
-        public async Task<MyOrchestrationDto> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+        _logger = logger;
+    }
+
+    [Function(Constants.MyOrchestration)]
+    public async Task<MyOrchestrationDto> RunOrchestrator(
+        [OrchestrationTrigger] TaskOrchestrationContext context)
+    {
+        var myOrchestrationDto = new MyOrchestrationDto
         {
-            var myOrchestrationDto = new MyOrchestrationDto
-            {
-                InputStartData = context.GetInput<string>()
-            };
+            InputStartData = context.GetInput<string>()
+        };
 
-            if (!context.IsReplaying)
-            {
-                log.LogWarning($"begin MyOrchestration with input {context.GetInput<string>()}");
-            }
-
-            var myActivityOne = await context.CallActivityAsync<string>(
-                Constants.MyActivityOne, context.GetInput<string>());
-
-            myOrchestrationDto.MyActivityOneResult = myActivityOne;
-
-            if(!context.IsReplaying)
-            {
-                log.LogWarning($"myActivityOne completed {myActivityOne}");
-            }
-
-            var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
-                Constants.MyExternalInputEvent);
-            myOrchestrationDto.ExternalInputData = myActivityTwoInputEvent;
-
-            var myActivityTwo = await context.CallActivityAsync<string>(
-                Constants.MyActivityTwo, myActivityTwoInputEvent);
-
-            myOrchestrationDto.MyActivityTwoResult = myActivityTwo;
-
-            if (!context.IsReplaying)
-            {
-                log.LogWarning($"myActivityTwo completed {myActivityTwo}");
-            }
-
-            return myOrchestrationDto;
+        if (!context.IsReplaying)
+        {
+            _logger.LogWarning("begin MyOrchestration with input {input}", context.GetInput<string>());
         }
+
+        var myActivityOne = await context.CallActivityAsync<string>(
+            Constants.MyActivityOne, context.GetInput<string>());
+
+        myOrchestrationDto.MyActivityOneResult = myActivityOne;
+
+        if (!context.IsReplaying)
+        {
+            _logger.LogWarning("myActivityOne completed {myActivityOne}", myActivityOne);
+        }
+
+        var myActivityTwoInputEvent = await context.WaitForExternalEvent<string>(
+            Constants.MyExternalInputEvent);
+        myOrchestrationDto.ExternalInputData = myActivityTwoInputEvent;
+
+        var myActivityTwo = await context.CallActivityAsync<string>(
+            Constants.MyActivityTwo, myActivityTwoInputEvent);
+
+        myOrchestrationDto.MyActivityTwoResult = myActivityTwo;
+
+        if (!context.IsReplaying)
+        {
+            _logger.LogWarning("myActivityTwo completed {myActivityTwo}", myActivityTwo);
+        }
+
+        return myOrchestrationDto;
     }
 }

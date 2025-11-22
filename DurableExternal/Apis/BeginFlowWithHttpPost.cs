@@ -1,24 +1,28 @@
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using System.Net.Http;
 
-namespace MyAzureFunctions.Apis
+namespace MyAzureFunctions.Apis;
+
+public class BeginFlowWithHttpPost
 {
-    public class BeginFlowWithHttpPost
-    {
-        [FunctionName(Constants.BeginFlowWithHttpPost)]
-        public async Task<HttpResponseMessage> HttpStart(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestMessage req,
-          [DurableClient] IDurableOrchestrationClient starter,
-          ILogger log)
-        {
-            string instanceId = await starter.StartNewAsync(Constants.MyOrchestration, null, "input data to start flow");
-            log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+    private readonly ILogger<BeginFlowWithHttpPost> _logger;
 
-            return starter.CreateCheckStatusResponse(req, instanceId);
-        }
+    public BeginFlowWithHttpPost(ILogger<BeginFlowWithHttpPost> logger)
+    {
+        _logger = logger;
+    }
+
+    [Function(Constants.BeginFlowWithHttpPost)]
+    public async Task<IActionResult> HttpStart(
+      [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
+      [DurableClient] DurableTaskClient starter)
+    {
+        string instanceId = await starter.ScheduleNewOrchestrationInstanceAsync(Constants.MyOrchestration, "input data to start flow");
+        _logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
+
+        return new OkObjectResult(new { instanceId });
     }
 }

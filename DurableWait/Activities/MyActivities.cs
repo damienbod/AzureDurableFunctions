@@ -1,42 +1,43 @@
 using DurableWait.Model;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
 
-namespace DurableWait.Activities
+namespace DurableWait.Activities;
+
+public class MyActivities
 {
-    public class MyActivities
+    private readonly MyConfiguration _myConfiguration;
+    private readonly MyConfigurationSecrets _myConfigurationSecrets;
+    private readonly ILogger<MyActivities> _logger;
+
+    public MyActivities(ILogger<MyActivities> logger,
+        IOptions<MyConfiguration> myConfiguration,
+        IOptions<MyConfigurationSecrets> myConfigurationSecrets)
     {
-        private readonly MyConfiguration _myConfiguration;
-        private readonly MyConfigurationSecrets _myConfigurationSecrets;
+        _myConfiguration = myConfiguration.Value;
+        _myConfigurationSecrets = myConfigurationSecrets.Value;
+        _logger = logger;
+    }
 
-        public MyActivities(IOptions<MyConfiguration> myConfiguration, 
-            IOptions<MyConfigurationSecrets> myConfigurationSecrets)
-        {
-            _myConfiguration = myConfiguration.Value;
-            _myConfigurationSecrets = myConfigurationSecrets.Value;
-        }
+    [Function(Constants.MyActivityOne)]
+    public string MyActivityOne([ActivityTrigger] BeginRequestData beginRequestData)
+    {
+        _logger.LogInformation("Activity {myActivityOne} {beginRequestDataId} {myConfigurationName} {myConfigurationSecretsMySecretOne} amount of retries: {myConfigurationAmountOfRetries}.",
+            Constants.MyActivityOne, beginRequestData.Id, _myConfiguration.Name, _myConfigurationSecrets.MySecretOne, _myConfiguration.AmountOfRetries);
 
-        [FunctionName(Constants.MyActivityOne)]
-        public string MyActivityOne([ActivityTrigger] IDurableActivityContext context, ILogger log)
-        {
-            BeginRequestData beginRequestData = context.GetInput<BeginRequestData>();
-            log.LogInformation($"Activity {Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.");
-            return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
-        }
+        return $"{Constants.MyActivityOne} {beginRequestData.Id} {_myConfiguration.Name} {_myConfigurationSecrets.MySecretOne} amount of retries: {_myConfiguration.AmountOfRetries}.";
+    }
 
-        [FunctionName(Constants.MyActivityTwo)]
-        public string MyActivityTwo([ActivityTrigger] IDurableActivityContext context, ILogger log)
-        {
-            // simi HTTP request which lasts 14s and causes timeout
-            // Thread.Sleep(14000);
+    [Function(Constants.MyActivityTwo)]
+    public string MyActivityTwo([ActivityTrigger] MyOrchestrationDto myOrchestrationDto)
+    {
+        // simi HTTP request which lasts 14s and causes timeout
+        // Thread.Sleep(14000);
 
-            MyOrchestrationDto myOrchestrationDto = context.GetInput<MyOrchestrationDto>();
-            log.LogInformation($"Activity {Constants.MyActivityTwo}  {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}.");
-            return $"{Constants.MyActivityTwo} {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}!";
-        }
+        _logger.LogInformation("Activity {myActivityTwo}  {myOrchestrationDtoBeginRequestMessage} {myConfigurationName}.",
+            Constants.MyActivityTwo, myOrchestrationDto.BeginRequest.Message, _myConfiguration.Name);
 
+        return $"{Constants.MyActivityTwo} {myOrchestrationDto.BeginRequest.Message} {_myConfiguration.Name}!";
     }
 }
