@@ -9,9 +9,9 @@ public class MyActivities
 {
     private readonly MyConfiguration _myConfiguration;
     private readonly MyConfigurationSecrets _myConfigurationSecrets;
-    private readonly ILogger<MyOrchestration> _logger;
+    private readonly ILogger<MyActivities> _logger;
 
-    public MyActivities(ILogger<MyOrchestration> logger,
+    public MyActivities(ILogger<MyActivities> logger,
         IOptions<MyConfiguration> myConfiguration,
         IOptions<MyConfigurationSecrets> myConfigurationSecrets)
     {
