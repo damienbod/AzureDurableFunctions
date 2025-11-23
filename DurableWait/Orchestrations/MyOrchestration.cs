@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
 
-namespace MyAzureFDurableWaitunctions.Orchestrations;
+namespace DurableWait.Orchestrations;
 
 public class MyOrchestration
 {
